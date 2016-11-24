@@ -106,6 +106,9 @@ public class HttpClientHelp {
 	private static PoolingHttpClientConnectionManager other_connectionManager;
 	private static CloseableHttpClient other_httpClient = null;
 
+	private static PoolingHttpClientConnectionManager tmp_connectionManager;
+	private static CloseableHttpClient tmp_httpClient = null;
+	
 	static {
 
 		try {
@@ -126,6 +129,12 @@ public class HttpClientHelp {
 			other_connectionManager.setMaxTotal(DEFAULT_MAX_TOTAL_CONNECTIONS);
 			// 将每个路由基础的连接增加到25
 			other_connectionManager.setDefaultMaxPerRoute(DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
+			
+			tmp_connectionManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+			// 将最大连接数增加到100
+			tmp_connectionManager.setMaxTotal(DEFAULT_MAX_TOTAL_CONNECTIONS);
+			// 将每个路由基础的连接增加到25
+			tmp_connectionManager.setDefaultMaxPerRoute(DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
 		} catch (Exception e) {
 			logger.error("初始化cm线程池异常", e);
 		}
@@ -211,6 +220,17 @@ public class HttpClientHelp {
 	public static String doGet(String url, Map<String, String> params, Map<String, String> headers) throws Exception {
 		return doGet(url, params, headers, HTTP_ENCODING, HTTP_ENCODING, Boolean.FALSE, Boolean.FALSE);
 	}
+	
+	public static Map<String, String> getDefaultHeader(){
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("Accept-Language", "zh-CN,zh;q=0.8");
+		headers.put("Connection", "Keep-Alive");
+		headers.put("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36 QIHU 360SE");
+		headers.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+		headers.put("Accept-Encoding", "gzip,deflate,sdch");
+		headers.put("Cache-Control", "no-cache");
+		return headers;
+	}
 
 	private static void logUrl(HttpRequestBase requestBase) throws MalformedURLException {
 		logger.info(String.format("发送请求:%s:%s | %s ", requestBase.getURI().getHost(), requestBase.getURI().getPort(), requestBase.getURI().toURL()));
@@ -218,10 +238,12 @@ public class HttpClientHelp {
 
 	private static void validateResponse(CloseableHttpResponse response, HttpRequestBase requestBase, Long timeSpan) throws Exception {
 		StatusLine status = response.getStatusLine();
-		logger.info(String.format(" %s:%s | %s | %s | %s", requestBase.getURI().getHost(), requestBase.getURI().getPort(), status.getStatusCode(), timeSpan, requestBase.getURI().toURL()));
 		if (response.getStatusLine().getStatusCode() >= 400) {
 			response.close();
 			throw new IOException("Got bad response, error code = " + response.getStatusLine().getStatusCode());
+//			logger.error(String.format(" %s:%s | %s | %s | %s", requestBase.getURI().getHost(), requestBase.getURI().getPort(), status.getStatusCode(), timeSpan, requestBase.getURI().toURL()));
+		}else{
+			logger.info(String.format(" %s:%s | %s | %s | %s", requestBase.getURI().getHost(), requestBase.getURI().getPort(), status.getStatusCode(), timeSpan, requestBase.getURI().toURL()));
 		}
 	}
 
@@ -236,6 +258,17 @@ public class HttpClientHelp {
 		}
 		return responseContent;
 	}
+	
+	public static CloseableHttpClient getTmpHttpClient() {
+		tmp_connectionManager.closeExpiredConnections();
+		// 可选的, 关闭自定义秒内不活动的连接
+		tmp_connectionManager.closeIdleConnections(CLOSE_INACTIVE_CONNECTIONS_SECONDS, TimeUnit.SECONDS);
+
+		if (tmp_httpClient == null) {
+			tmp_httpClient = HttpClients.custom().setConnectionManager(other_connectionManager).build();
+		}
+		return tmp_httpClient;
+	}
 
 	public static CloseableHttpClient getOtherHttpClient() {
 		other_connectionManager.closeExpiredConnections();
@@ -243,7 +276,13 @@ public class HttpClientHelp {
 		other_connectionManager.closeIdleConnections(CLOSE_INACTIVE_CONNECTIONS_SECONDS, TimeUnit.SECONDS);
 
 		if (other_httpClient == null) {
-			other_httpClient = HttpClients.custom().setConnectionManager(other_connectionManager).build();
+			if (PropKit.get("isproxy_other").equals("1")) {
+				String host = PropKit.get("host");
+				int port = PropKit.getInt("port");
+				other_httpClient = HttpClients.custom().setProxy(new HttpHost(host, port)).setConnectionManager(connectionManager).build();
+			} else {
+				other_httpClient = HttpClients.custom().setConnectionManager(other_connectionManager).build();
+			}
 		}
 		return other_httpClient;
 	}
@@ -405,6 +444,40 @@ public class HttpClientHelp {
 			return false;
 		}
 	}
+	
+	public static String getByTmpClient(String url, Map<String, String> params, Map<String, String> headers) throws Exception {
+		HttpGet httpget = new HttpGet();
+		CloseableHttpResponse response = null;
+		try {
+			// 增加参数
+			URIBuilder builder = new URIBuilder(url);
+			if (params != null && !params.isEmpty()) {
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				for (Map.Entry<String, String> entry : params.entrySet()) {
+					nameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+				}
+				builder.setCustomQuery(URLEncodedUtils.format(nameValuePairs, HTTP_ENCODING));
+			}
+			httpget = new HttpGet(builder.build());
+			// 重设或新增header
+			if (headers != null && !headers.isEmpty()) {
+				for (Map.Entry<String, String> entry : headers.entrySet()) {
+					httpget.setHeader(entry.getKey(), entry.getValue());
+				}
+			}
+			httpget.setConfig(getRequestConfig(Boolean.FALSE));
+			tmp_httpClient = getTmpHttpClient();
+			response = tmp_httpClient.execute(httpget);
+			
+			return getResult(url, HTTP_ENCODING, response);
+		} finally {
+			if (response != null)
+				response.close();
+			httpget.abort();
+			httpget.releaseConnection();
+			closeHttpClient(tmp_httpClient);
+		}
+	}
 
 	public static String getCookie(String url, Map<String, String> params, Map<String, String> headers) throws Exception {
 		HttpGet httpget = new HttpGet();
@@ -528,7 +601,7 @@ public class HttpClientHelp {
 
 	private static boolean checkFileAllDownload(CloseableHttpResponse response, File f) throws Exception {
 		Header hd = response.getFirstHeader("Content-Length");
-		if (hd != null) {
+		if (hd != null && f.exists()) {
 			int length = Integer.valueOf(hd.getValue());
 			int filelength = FileUtils.readFileToByteArray(f).length;
 			if (length != filelength) {

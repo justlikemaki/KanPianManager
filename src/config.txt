@@ -25,6 +25,7 @@ westporn=http://pornleech.com/
 isproxy=1
 host=localhost
 port=1088
+isproxy_other=0
 
 #管理后台登录账号密码
 root=rootoor

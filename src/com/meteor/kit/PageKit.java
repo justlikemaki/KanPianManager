@@ -884,7 +884,7 @@ public class PageKit {
 			}
 		}
 		//拉取页面得到doc对象
-		Map head = new HashMap();
+		Map head = HttpClientHelp.getDefaultHeader();
 		String ref=censoredhost.replace("/cn/","");
 		head.put("Referer", censoredhost);
 		String html=HttpClientHelp.doGet(url, head);
@@ -963,7 +963,7 @@ public class PageKit {
 			}
 		}
 		//拉取页面得到doc对象
-		Map head = new HashMap();
+		Map head = HttpClientHelp.getDefaultHeader();
 		String ref=uncensoredhost.replace("/cn/","");
 		head.put("Referer", ref);
 		String html=HttpClientHelp.doGet(url, head);
@@ -1028,27 +1028,13 @@ public class PageKit {
 		}else{
 			 ref=PropKit.get("censoredhost");
 		}
-		Map head = new HashMap();
+		Map head = HttpClientHelp.getDefaultHeader();
 		ref=ref.replace("/cn/","");
 		head.put("Referer", ref);
 		String html=HttpClientHelp.doGet(blink, head);
 
 //		String html=MultitHttpClient.get(blink);
 		Document doc = Jsoup.parse(html);
-		/**得到图片地址**/
-		Elements imgs=doc.getElementsByClass("bigImage");
-		String img=imgs.get(0).attr("href");
-		if(!img.startsWith("http")){
-			img="http:"+img;
-		}
-		if (img.contains(imgReplcKey)) {
-			String newimg = getBase64Img(img);
-			if (StringUtils.isNotBlank(newimg)) {
-				img = newimg;
-				bean.setIsstar("1");
-			}
-		}
-		bean.setImgsrc(img);
 		/**循环得到标签**/
 		List tags = new ArrayList();
 		tags.add(typename.toUpperCase());
@@ -1079,6 +1065,20 @@ public class PageKit {
 			tags.add(p.text());
 		}
 		bean.setTags(JsonKit.bean2JSON(tags));
+		/**得到图片地址**/
+		Elements imgs=doc.getElementsByClass("bigImage");
+		String img=imgs.get(0).attr("href");
+		if(!img.startsWith("http")){
+			img="http:"+img;
+		}
+		if (img.contains(imgReplcKey)) {
+			String newimg = getBase64Img(img);
+			if (StringUtils.isNotBlank(newimg)) {
+				img = newimg;
+				bean.setIsstar("1");
+			}
+		}
+		bean.setImgsrc(img);
 		return true;
 	}
 
@@ -1183,6 +1183,26 @@ public class PageKit {
 				String head = tds.get(0).text();
 				head = head.toLowerCase();
 				Element thistd = tds.get(1);
+				if (head.equals("genre")) {
+					Elements as=thistd.getElementsByTag("a");
+					for (Element a:as){
+						boolean flag = checkBlockKey(a.text(), typename);
+						if(flag){
+							return false;
+						}
+						tags.add(a.text());
+					}
+					break;
+				}
+			}
+		}
+		for (int i=0;i<trs.size();i++){
+			Element tr=trs.get(i);
+			Elements tds=tr.getElementsByTag("td");
+			if(tds!=null&&tds.size()>1) {
+				String head = tds.get(0).text();
+				head = head.toLowerCase();
+				Element thistd = tds.get(1);
 				if (head.equals("name")) {
 					List torrentnames = new ArrayList();
 					torrentnames.add(title);
@@ -1203,16 +1223,6 @@ public class PageKit {
 						bean.setIsstar("1");
 					}
 					bean.setImgsrc(img);
-				}
-				if (head.equals("genre")) {
-					Elements as=thistd.getElementsByTag("a");
-					for (Element a:as){
-						boolean flag = checkBlockKey(a.text(), typename);
-						if(flag){
-							return false;
-						}
-						tags.add(a.text());
-					}
 				}
 				if (head.equals("description")) {
 					String description = thistd.text();
@@ -1522,7 +1532,7 @@ public class PageKit {
 		String serverhost= PropKit.get("serverhost");
 		String path=serverhost+"checkhost";
 		try {
-			HttpClientHelp.doGet(path);
+			HttpClientHelp.getByTmpClient(path,null,null);
 		} catch (Exception e) {
 			logger.error("替换url任务失败:"+e.toString());
 		}
