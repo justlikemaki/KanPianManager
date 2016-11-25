@@ -887,7 +887,7 @@ public class PageKit {
 		Map head = HttpClientHelp.getDefaultHeader();
 		String ref=censoredhost.replace("/cn/","");
 		head.put("Referer", censoredhost);
-		String html=HttpClientHelp.doGet(url, head);
+		String html=HttpClientHelp.doGet(url,null,head,true);
 		Document doc = Jsoup.parse(html);
 		Elements news = doc.select(".item");
 		if(news == null || news.isEmpty() || news.size()==0){
@@ -966,7 +966,7 @@ public class PageKit {
 		Map head = HttpClientHelp.getDefaultHeader();
 		String ref=uncensoredhost.replace("/cn/","");
 		head.put("Referer", ref);
-		String html=HttpClientHelp.doGet(url, head);
+		String html=HttpClientHelp.doGet(url,null,head,true);
 		Document doc = Jsoup.parse(html);
 		Elements news = doc.select(".item");
 		if(news == null || news.isEmpty() || news.size()==0){
@@ -1031,7 +1031,7 @@ public class PageKit {
 		Map head = HttpClientHelp.getDefaultHeader();
 		ref=ref.replace("/cn/","");
 		head.put("Referer", ref);
-		String html=HttpClientHelp.doGet(blink, head);
+		String html=HttpClientHelp.doGet(blink,null,head,true);
 
 //		String html=MultitHttpClient.get(blink);
 		Document doc = Jsoup.parse(html);
@@ -1312,10 +1312,10 @@ public class PageKit {
 		String tmpdir= MainConfig.tmpsavedir;//PropKit.get("tmpsavedir");
 		String img = "";
 		Map head = new HashMap();
-		String ref=PropKit.get("uncensoredhost");
-		head.put("Referer", ref);
+//		String ref=PropKit.get("uncensoredhost");
+//		head.put("Referer", ref);
 		imgurl = PageKit.replace20All(imgurl);
-		String res = HttpClientHelp.getFileDownByPath(imgurl, tmpdir, 1, head);
+		String res = HttpClientHelp.getFileDownByPath(imgurl, tmpdir, 1, head,false);
 		Map<String, String> p = JsonKit.json2Map(res);
 		if (p.get("status").equals("0")) {
 			img = SecurityEncodeKit.GetImageStr(p.get("filepath"));
@@ -1513,7 +1513,7 @@ public class PageKit {
 	public static String  downloadWithStatus(String url,String filedest,String errcode){
 		File f = new File(filedest);
 		if (!f.exists()) {
-			String res = HttpClientHelp.getFileDownByPathFull(url, filedest);
+			String res = HttpClientHelp.getFileDownByPathFull(url, filedest,false);
 			Map resp = JsonKit.json2Map(res);
 			Object errmsg=resp.get("errmsg");
 			if(errmsg!=null && errmsg.toString().contains("404")){
@@ -1532,7 +1532,7 @@ public class PageKit {
 		String serverhost= PropKit.get("serverhost");
 		String path=serverhost+"checkhost";
 		try {
-			HttpClientHelp.getByTmpClient(path,null,null);
+			HttpClientHelp.doGet(path,false);
 		} catch (Exception e) {
 			logger.error("替换url任务失败:"+e.toString());
 		}

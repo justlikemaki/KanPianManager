@@ -105,9 +105,6 @@ public class HttpClientHelp {
 
 	private static PoolingHttpClientConnectionManager other_connectionManager;
 	private static CloseableHttpClient other_httpClient = null;
-
-	private static PoolingHttpClientConnectionManager tmp_connectionManager;
-	private static CloseableHttpClient tmp_httpClient = null;
 	
 	static {
 
@@ -129,12 +126,6 @@ public class HttpClientHelp {
 			other_connectionManager.setMaxTotal(DEFAULT_MAX_TOTAL_CONNECTIONS);
 			// 将每个路由基础的连接增加到25
 			other_connectionManager.setDefaultMaxPerRoute(DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
-			
-			tmp_connectionManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-			// 将最大连接数增加到100
-			tmp_connectionManager.setMaxTotal(DEFAULT_MAX_TOTAL_CONNECTIONS);
-			// 将每个路由基础的连接增加到25
-			tmp_connectionManager.setDefaultMaxPerRoute(DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
 		} catch (Exception e) {
 			logger.error("初始化cm线程池异常", e);
 		}
@@ -149,40 +140,40 @@ public class HttpClientHelp {
 		return doPost(url, Boolean.FALSE);
 	}
 
-	public static String doPost(String url, boolean keepAlive) throws Exception {
-		return doPost(url, null, null, null, null, HTTP_ENCODING, HTTP_ENCODING, Boolean.FALSE, keepAlive);
+	public static String doPost(String url, boolean openProxy) throws Exception {
+		return doPost(url, null, null, null, null, HTTP_ENCODING, HTTP_ENCODING, Boolean.FALSE, openProxy);
 	}
 
-	public static String doPost(String url, final String entities, String mimeType, boolean keepAlive) throws Exception {
-		return doPost(url, entities, mimeType, HTTP_ENCODING, keepAlive);
+	public static String doPost(String url, final String entities, String mimeType, boolean openProxy) throws Exception {
+		return doPost(url, entities, mimeType, HTTP_ENCODING, openProxy);
 	}
 
-	public static String doPost(String url, final String entities, String mimeType, String encoding, boolean keepAlive) throws Exception {
-		return doPost(url, entities, mimeType, encoding, Boolean.FALSE, keepAlive);
+	public static String doPost(String url, final String entities, String mimeType, String encoding, boolean openProxy) throws Exception {
+		return doPost(url, entities, mimeType, encoding, Boolean.FALSE, openProxy);
 	}
 
-	public static String doPost(String url, final String entities, String mimeType, String encoding, boolean needCookie, boolean keepAlive) throws Exception {
-		return doPost(url, entities, mimeType, null, encoding, needCookie, keepAlive);
+	public static String doPost(String url, final String entities, String mimeType, String encoding, boolean needCookie, boolean openProxy) throws Exception {
+		return doPost(url, entities, mimeType, null, encoding, needCookie, openProxy);
 	}
 
-	public static String doPost(String url, final String entities, String mimeType, Map<String, String> headers, String encoding, boolean needCookie, boolean keepAlive) throws Exception {
-		return doPost(url, entities, mimeType, null, headers, encoding, encoding, needCookie, keepAlive);
+	public static String doPost(String url, final String entities, String mimeType, Map<String, String> headers, String encoding, boolean needCookie, boolean openProxy) throws Exception {
+		return doPost(url, entities, mimeType, null, headers, encoding, encoding, needCookie, openProxy);
 	}
 
-	public static String doPost(String url, Map<String, String> params, boolean keepAlive) throws Exception {
-		return doPost(url, params, HTTP_ENCODING, keepAlive);
+	public static String doPost(String url, Map<String, String> params, boolean openProxy) throws Exception {
+		return doPost(url, params, HTTP_ENCODING, openProxy);
 	}
 
-	public static String doPost(String url, Map<String, String> params, String encoding, boolean keepAlive) throws Exception {
-		return doPost(url, params, encoding, Boolean.FALSE, keepAlive);
+	public static String doPost(String url, Map<String, String> params, String encoding, boolean openProxy) throws Exception {
+		return doPost(url, params, encoding, Boolean.FALSE, openProxy);
 	}
 
-	public static String doPost(String url, Map<String, String> params, String encoding, boolean needCookie, boolean keepAlive) throws Exception {
-		return doPost(url, params, null, encoding, needCookie, keepAlive);
+	public static String doPost(String url, Map<String, String> params, String encoding, boolean needCookie, boolean openProxy) throws Exception {
+		return doPost(url, params, null, encoding, needCookie, openProxy);
 	}
 
-	public static String doPost(String url, Map<String, String> params, Map<String, String> headers, String encoding, boolean needCookie, boolean keepAlive) throws Exception {
-		return doPost(url, null, null, params, headers, encoding, encoding, needCookie, keepAlive);
+	public static String doPost(String url, Map<String, String> params, Map<String, String> headers, String encoding, boolean needCookie, boolean openProxy) throws Exception {
+		return doPost(url, null, null, params, headers, encoding, encoding, needCookie, openProxy);
 	}
 
 	public static String doPost(String url, Map<String, String> headers) throws Exception {
@@ -197,20 +188,20 @@ public class HttpClientHelp {
 		return doGet(url, Boolean.FALSE);
 	}
 
-	public static String doGet(String url, boolean keepAlive) throws Exception {
-		return doGet(url, null, null, HTTP_ENCODING, HTTP_ENCODING, Boolean.FALSE, keepAlive);
+	public static String doGet(String url, boolean openProxy) throws Exception {
+		return doGet(url, null, null, HTTP_ENCODING, HTTP_ENCODING, Boolean.FALSE, openProxy);
 	}
 
-	public static String doGet(String url, Map<String, String> params, boolean keepAlive) throws Exception {
-		return doGet(url, params, HTTP_ENCODING, keepAlive);
+	public static String doGet(String url, Map<String, String> params, boolean openProxy) throws Exception {
+		return doGet(url, params, HTTP_ENCODING, openProxy);
 	}
 
-	public static String doGet(String url, Map<String, String> params, String encoding, boolean keepAlive) throws Exception {
-		return doGet(url, params, encoding, Boolean.FALSE, keepAlive);
+	public static String doGet(String url, Map<String, String> params, String encoding, boolean openProxy) throws Exception {
+		return doGet(url, params, encoding, Boolean.FALSE, openProxy);
 	}
 
-	public static String doGet(String url, Map<String, String> params, String encoding, boolean needCookie, boolean keepAlive) throws Exception {
-		return doGet(url, params, null, encoding, encoding, needCookie, keepAlive);
+	public static String doGet(String url, Map<String, String> params, String encoding, boolean needCookie, boolean openProxy) throws Exception {
+		return doGet(url, params, null, encoding, encoding, needCookie, openProxy);
 	}
 
 	public static String doGet(String url, Map<String, String> headers) throws Exception {
@@ -218,7 +209,11 @@ public class HttpClientHelp {
 	}
 
 	public static String doGet(String url, Map<String, String> params, Map<String, String> headers) throws Exception {
-		return doGet(url, params, headers, HTTP_ENCODING, HTTP_ENCODING, Boolean.FALSE, Boolean.FALSE);
+		return doGet(url, params, headers, Boolean.FALSE);
+	}
+	
+	public static String doGet(String url, Map<String, String> params, Map<String, String> headers, boolean openProxy) throws Exception {
+		return doGet(url, params, headers, HTTP_ENCODING, HTTP_ENCODING, Boolean.FALSE, openProxy);
 	}
 	
 	public static Map<String, String> getDefaultHeader(){
@@ -259,30 +254,13 @@ public class HttpClientHelp {
 		return responseContent;
 	}
 	
-	public static CloseableHttpClient getTmpHttpClient() {
-		tmp_connectionManager.closeExpiredConnections();
-		// 可选的, 关闭自定义秒内不活动的连接
-		tmp_connectionManager.closeIdleConnections(CLOSE_INACTIVE_CONNECTIONS_SECONDS, TimeUnit.SECONDS);
-
-		if (tmp_httpClient == null) {
-			tmp_httpClient = HttpClients.custom().setConnectionManager(other_connectionManager).build();
-		}
-		return tmp_httpClient;
-	}
-
 	public static CloseableHttpClient getOtherHttpClient() {
 		other_connectionManager.closeExpiredConnections();
 		// 可选的, 关闭自定义秒内不活动的连接
 		other_connectionManager.closeIdleConnections(CLOSE_INACTIVE_CONNECTIONS_SECONDS, TimeUnit.SECONDS);
 
 		if (other_httpClient == null) {
-			if (PropKit.get("isproxy_other").equals("1")) {
-				String host = PropKit.get("host");
-				int port = PropKit.getInt("port");
-				other_httpClient = HttpClients.custom().setProxy(new HttpHost(host, port)).setConnectionManager(connectionManager).build();
-			} else {
-				other_httpClient = HttpClients.custom().setConnectionManager(other_connectionManager).build();
-			}
+			other_httpClient = HttpClients.custom().setConnectionManager(other_connectionManager).build();
 		}
 		return other_httpClient;
 	}
@@ -293,18 +271,12 @@ public class HttpClientHelp {
 		connectionManager.closeIdleConnections(CLOSE_INACTIVE_CONNECTIONS_SECONDS, TimeUnit.SECONDS);
 
 		if (httpClient == null) {
-			if (PropKit.get("isproxy").equals("1")) {
-				String host = PropKit.get("host");
-				int port = PropKit.getInt("port");
-				httpClient = HttpClients.custom().setProxy(new HttpHost(host, port)).setConnectionManager(connectionManager).build();
-			} else {
-				httpClient = HttpClients.custom().setConnectionManager(connectionManager).build();
-			}
+			httpClient = HttpClients.custom().setConnectionManager(connectionManager).build();
 		}
 		return httpClient;
 	}
 
-	public static RequestConfig getRequestConfig(boolean needCookie) {
+	public static RequestConfig getRequestConfig(boolean needCookie,boolean openProxy) {
 		Builder unbRequestConfig = RequestConfig.custom().setMaxRedirects(3)// 设置最大跳转数
 				.setSocketTimeout(DEFAULT_READ_TIMEOUT_MILLISECONDS).setConnectTimeout(DEFAULT_CONN_TIMEOUT_MILLISECONDS).setConnectionRequestTimeout(DEFAULT_CONN_TIMEOUT_MILLISECONDS);
 		if (needCookie) {
@@ -312,16 +284,21 @@ public class HttpClientHelp {
 		} else {
 			unbRequestConfig.setCookieSpec(CookieSpecs.IGNORE_COOKIES);
 		}
+		if (PropKit.get("isproxy").equals("1") && openProxy) {
+			String host = PropKit.get("host");
+			int port = PropKit.getInt("port");
+			unbRequestConfig.setProxy(new HttpHost(host, port));
+		}
 		return unbRequestConfig.build();
 	}
 
-	private static String doRequest(String url, HttpRequestBase request, String resultEncoding, boolean keepAlive) throws Exception {
+	private static String doRequest(String url, HttpRequestBase request, String resultEncoding) throws Exception {
 		CloseableHttpResponse response = null;
 		try {
 			logUrl(request);
-			if (!keepAlive) {
-				request.setHeader("Connection", "close");
-			}
+//			if (!keepAlive) {
+//				request.setHeader("Connection", "close");
+//			}
 			StopWatch watch = new StopWatch();
 			watch.start();
 			httpClient = getHttpClient();
@@ -354,13 +331,13 @@ public class HttpClientHelp {
 	 * @param encoding
 	 * @param resultEncoding
 	 * @param needCookie
-	 * @param keepAlive
+	 * @param openProxy
 	 * @return
 	 * @throws Exception
 	 *             String 返回类型
 	 * @category post方法请求url，可传流(或传参数)，header，编码方式(请求和响应)，是否签名，是否保持长连接
 	 */
-	public static String doPost(String url, final String entities, String mimeType, Map<String, String> params, Map<String, String> headers, String encoding, String resultEncoding, boolean needCookie, boolean keepAlive) throws Exception {
+	public static String doPost(String url, final String entities, String mimeType, Map<String, String> params, Map<String, String> headers, String encoding, String resultEncoding, boolean needCookie, boolean openProxy) throws Exception {
 		HttpPost httpPost = new HttpPost(url);
 		// 要么传字符串，要么传参数
 		if (StringUtils.isNotBlank(entities) && StringUtils.isNotBlank(mimeType)) {
@@ -379,12 +356,12 @@ public class HttpClientHelp {
 				httpPost.setHeader(entry.getKey(), entry.getValue());
 			}
 		}
-		// 保持长连接必须设置发送内容长度
-		if (keepAlive) {
-			httpPost.setHeader("Content-Length", String.valueOf(httpPost.getEntity().getContentLength()));
-		}
-		httpPost.setConfig(getRequestConfig(needCookie));
-		return doRequest(url, httpPost, resultEncoding, keepAlive);
+//		// 保持长连接必须设置发送内容长度
+//		if (keepAlive) {
+//			httpPost.setHeader("Content-Length", String.valueOf(httpPost.getEntity().getContentLength()));
+//		}
+		httpPost.setConfig(getRequestConfig(needCookie,openProxy));
+		return doRequest(url, httpPost, resultEncoding);
 	}
 
 	/**
@@ -396,13 +373,13 @@ public class HttpClientHelp {
 	 * @param encoding
 	 * @param resultEncoding
 	 * @param needCookie
-	 * @param keepAlive
+	 * @param openProxy
 	 * @return
 	 * @throws Exception
 	 *             String 返回类型
 	 * @category get方法请求url，可传参数，header，编码方式(请求和响应)，是否签名，是否保持长连接
 	 */
-	public static String doGet(String url, Map<String, String> params, Map<String, String> headers, String encoding, String resultEncoding, boolean needCookie, boolean keepAlive) throws Exception {
+	public static String doGet(String url, Map<String, String> params, Map<String, String> headers, String encoding, String resultEncoding, boolean needCookie, boolean openProxy) throws Exception {
 		// 增加参数
 		URIBuilder builder = new URIBuilder(url);
 		if (params != null && !params.isEmpty()) {
@@ -419,8 +396,8 @@ public class HttpClientHelp {
 				httpget.setHeader(entry.getKey(), entry.getValue());
 			}
 		}
-		httpget.setConfig(getRequestConfig(needCookie));
-		return doRequest(url, httpget, resultEncoding, keepAlive);
+		httpget.setConfig(getRequestConfig(needCookie,openProxy));
+		return doRequest(url, httpget, resultEncoding);
 	}
 
 	// 手动释放请求链接
@@ -444,42 +421,8 @@ public class HttpClientHelp {
 			return false;
 		}
 	}
-	
-	public static String getByTmpClient(String url, Map<String, String> params, Map<String, String> headers) throws Exception {
-		HttpGet httpget = new HttpGet();
-		CloseableHttpResponse response = null;
-		try {
-			// 增加参数
-			URIBuilder builder = new URIBuilder(url);
-			if (params != null && !params.isEmpty()) {
-				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-				for (Map.Entry<String, String> entry : params.entrySet()) {
-					nameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
-				}
-				builder.setCustomQuery(URLEncodedUtils.format(nameValuePairs, HTTP_ENCODING));
-			}
-			httpget = new HttpGet(builder.build());
-			// 重设或新增header
-			if (headers != null && !headers.isEmpty()) {
-				for (Map.Entry<String, String> entry : headers.entrySet()) {
-					httpget.setHeader(entry.getKey(), entry.getValue());
-				}
-			}
-			httpget.setConfig(getRequestConfig(Boolean.FALSE));
-			tmp_httpClient = getTmpHttpClient();
-			response = tmp_httpClient.execute(httpget);
-			
-			return getResult(url, HTTP_ENCODING, response);
-		} finally {
-			if (response != null)
-				response.close();
-			httpget.abort();
-			httpget.releaseConnection();
-			closeHttpClient(tmp_httpClient);
-		}
-	}
 
-	public static String getCookie(String url, Map<String, String> params, Map<String, String> headers) throws Exception {
+	public static String getCookie(String url, Map<String, String> params, Map<String, String> headers,boolean openProxy) throws Exception {
 		HttpGet httpget = new HttpGet();
 		CloseableHttpResponse response = null;
 		try {
@@ -499,7 +442,7 @@ public class HttpClientHelp {
 					httpget.setHeader(entry.getKey(), entry.getValue());
 				}
 			}
-			httpget.setConfig(getRequestConfig(Boolean.FALSE));
+			httpget.setConfig(getRequestConfig(Boolean.TRUE,openProxy));
 			httpClient = getHttpClient();
 			response = httpClient.execute(httpget);
 			StringBuffer sb = new StringBuffer();
@@ -520,7 +463,7 @@ public class HttpClientHelp {
 		}
 	}
 
-	public static String getReHost(String url, Map<String, String> headers) throws Exception {
+	public static String getReHost(String url, Map<String, String> headers,boolean openProxy) throws Exception {
 		HttpGet httpget = new HttpGet(url);
 		CloseableHttpResponse response = null;
 		try {
@@ -530,7 +473,7 @@ public class HttpClientHelp {
 					httpget.setHeader(entry.getKey(), entry.getValue());
 				}
 			}
-			httpget.setConfig(getRequestConfig(Boolean.FALSE));
+			httpget.setConfig(getRequestConfig(Boolean.FALSE,openProxy));
 			HttpContext httpContext = new BasicHttpContext();
 			httpClient = getHttpClient();
 			response = httpClient.execute(httpget, httpContext);
@@ -545,11 +488,11 @@ public class HttpClientHelp {
 		}
 	}
 
-	public static Map<String, Object> getLengthAngName(String url) throws Exception {
+	public static Map<String, Object> getLengthAngName(String url,boolean openProxy) throws Exception {
 		HttpGet httpget = new HttpGet(url);
 		CloseableHttpResponse response = null;
 		try {
-			httpget.setConfig(getRequestConfig(Boolean.FALSE));
+			httpget.setConfig(getRequestConfig(Boolean.FALSE,openProxy));
 			HttpContext httpContext = new BasicHttpContext();
 			httpClient = getHttpClient();
 			response = httpClient.execute(httpget, httpContext);
@@ -639,7 +582,7 @@ public class HttpClientHelp {
 		return JsonKit.map2JSON(res);
 	}
 
-	public static String getFileDownByPath(String url, String filedest, int isdir, Map<String, String> headers) {
+	public static String getFileDownByPath(String url, String filedest, int isdir, Map<String, String> headers,boolean openProxy) {
 		Map resp = new HashMap();
 		String res = "";
 		HttpGet httpget = new HttpGet(url);
@@ -651,7 +594,7 @@ public class HttpClientHelp {
 					httpget.setHeader(entry.getKey(), entry.getValue());
 				}
 			}
-			httpget.setConfig(getRequestConfig(Boolean.FALSE));
+			httpget.setConfig(getRequestConfig(Boolean.FALSE,openProxy));
 			other_httpClient = getOtherHttpClient();
 			response = other_httpClient.execute(httpget);
 			HttpEntity entity = response.getEntity();
@@ -692,16 +635,16 @@ public class HttpClientHelp {
 		return res;
 	}
 
-	public static String getFileDownByPath(String url, String filedest, int isdir) {
-		return getFileDownByPath(url, filedest, isdir, null);
+	public static String getFileDownByPath(String url, String filedest, int isdir,boolean openProxy) {
+		return getFileDownByPath(url, filedest, isdir, null,openProxy);
 	}
 
-	public static String getFileDownByPathDir(String url, String filedest) {
-		return getFileDownByPath(url, filedest, 1, null);
+	public static String getFileDownByPathDir(String url, String filedest,boolean openProxy) {
+		return getFileDownByPath(url, filedest, 1, null,openProxy);
 	}
 
-	public static String getFileDownByPathFull(String url, String filedest) {
-		return getFileDownByPath(url, filedest, 0, null);
+	public static String getFileDownByPathFull(String url, String filedest,boolean openProxy) {
+		return getFileDownByPath(url, filedest, 0, null,openProxy);
 	}
 }
 

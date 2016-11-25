@@ -48,7 +48,7 @@ public class CyclicBarrierMultitDownload {
 	    	try {
 	    		CloseableHttpClient other_httpClient = HttpClientHelp.getOtherHttpClient();
 		    	httpHead.setHeader("Range", "bytes=0-"+(contentLength-1));
-		    	httpHead.setConfig(HttpClientHelp.getRequestConfig(false));
+		    	httpHead.setConfig(HttpClientHelp.getRequestConfig(false,ttm.getOpenProxy()));
 		    	response = other_httpClient.execute(httpHead);
 		    	if(response.getStatusLine().getStatusCode() == 206){
 		    		ttm.setAcceptRanges(true);
@@ -123,7 +123,7 @@ public class CyclicBarrierMultitDownload {
 			doit(url,threadnum, pos, f);
 			res="多线程下载已启动！";
 		}else{
-			res= HttpClientHelp.getFileDownByPathFull(url, filepath);
+			res= HttpClientHelp.getFileDownByPathFull(url, filepath,ttm.getOpenProxy());
 			ttm.setIsend(true);
 			ttm.getAllOut();
 		}
@@ -275,7 +275,7 @@ class Subtasks implements Runnable {
 			if(startPosition<endPosition){		    	
 	    		CloseableHttpClient other_httpClient = HttpClientHelp.getOtherHttpClient();
 	    		httpGet.setHeader("Range", "bytes="+startPosition+"-"+endPosition);
-	    		httpGet.setConfig(HttpClientHelp.getRequestConfig(false));
+	    		httpGet.setConfig(HttpClientHelp.getRequestConfig(false,ttm.getOpenProxy()));
 		    	response = other_httpClient.execute(httpGet);
 
 		        InputStream inputStream = response.getEntity().getContent();

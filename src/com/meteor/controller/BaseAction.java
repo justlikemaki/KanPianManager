@@ -872,7 +872,7 @@ public class BaseAction extends Controller {
 	private String testHaveNewHostByType(String type,String cof){
 		try {
 			String host= PropKit.get(type);
-			String newhost= HttpClientHelp.getReHost(host, null);
+			String newhost= HttpClientHelp.getReHost(host, null,true);
 			URL url=new URL(host);
 			String oldhost=url.getHost();
 			if(!oldhost.equals(newhost)){
@@ -1001,7 +1001,7 @@ public class BaseAction extends Controller {
 	private String dosomthing(String url,int threadnum,int trynum,String filename,HttpServletRequest request){
 		try {
 			String name=filename.substring(filename.lastIndexOf("/")+1);
-			Map mp=HttpClientHelp.getLengthAngName(url);	
+			Map mp=HttpClientHelp.getLengthAngName(url,false);	
 			String ctype=(String) mp.get("ctype");
 			if(!ctype.contains("text/html")){
 				String filenamebf=(String) mp.get("filename");

@@ -122,6 +122,10 @@ public class TaskThreadManagers {
 	 * 上一次的下载位置，用于计算平均速度
 	 */
 	protected long precountLengths = 0;
+	/**
+	 * 是否启用代理
+	 */
+	private static boolean openProxy = false;
 
 	protected Map threadCountMap = new HashMap();
 	protected Map threadStartPositionMap = new HashMap();
@@ -131,6 +135,14 @@ public class TaskThreadManagers {
 	protected Timer timer;// 用于创建定时任务，实时获取下载进度
 	protected final long roundtime = 3;
 	protected List<Subtasks> subs = new ArrayList();
+
+	public static boolean getOpenProxy() {
+		return openProxy;
+	}
+
+	public static void setOpenProxy(boolean openProxy) {
+		TaskThreadManagers.openProxy = openProxy;
+	}
 
 	public boolean isIsdel() {
 		return isdel;
