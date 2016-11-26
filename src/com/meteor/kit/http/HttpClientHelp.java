@@ -191,23 +191,7 @@ public class HttpClientHelp {
 	public static String doGet(String url, boolean openProxy) throws Exception {
 		return doGet(url, null, null, HTTP_ENCODING, HTTP_ENCODING, Boolean.FALSE, openProxy);
 	}
-
-	public static String doGet(String url, Map<String, String> params, boolean openProxy) throws Exception {
-		return doGet(url, params, HTTP_ENCODING, openProxy);
-	}
-
-	public static String doGet(String url, Map<String, String> params, String encoding, boolean openProxy) throws Exception {
-		return doGet(url, params, encoding, Boolean.FALSE, openProxy);
-	}
-
-	public static String doGet(String url, Map<String, String> params, String encoding, boolean needCookie, boolean openProxy) throws Exception {
-		return doGet(url, params, null, encoding, encoding, needCookie, openProxy);
-	}
-
-	public static String doGet(String url, Map<String, String> headers) throws Exception {
-		return doGet(url, null, headers);
-	}
-
+	
 	public static String doGet(String url, Map<String, String> params, Map<String, String> headers) throws Exception {
 		return doGet(url, params, headers, Boolean.FALSE);
 	}
@@ -215,7 +199,11 @@ public class HttpClientHelp {
 	public static String doGet(String url, Map<String, String> params, Map<String, String> headers, boolean openProxy) throws Exception {
 		return doGet(url, params, headers, HTTP_ENCODING, HTTP_ENCODING, Boolean.FALSE, openProxy);
 	}
-	
+
+	public static String doGet(String url, Map<String, String> params,Map<String, String> headers, String encoding, boolean needCookie, boolean openProxy) throws Exception {
+		return doGet(url, params, headers, encoding, encoding, needCookie, openProxy);
+	}
+
 	public static Map<String, String> getDefaultHeader(){
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("Accept-Language", "zh-CN,zh;q=0.8");
@@ -609,14 +597,14 @@ public class HttpClientHelp {
 			}
 		} catch (Exception e) {
 			if (!e.toString().contains("404")) {
-				logger.error("下载文件" + e.toString());
+				logger.error("下载文件" + e.toString(),e);
 			}
 			resp.put("status", -1);
 			resp.put("errmsg", e.toString());
 			res = JsonKit.map2JSON(resp);
 		} catch (Throwable t) {
 			if (!t.toString().contains("404")) {
-				logger.error("下载文件" + t.toString());
+				logger.error("下载文件" + t.toString(),t);
 			}
 			resp.put("status", -1);
 			resp.put("errmsg", t.toString());
