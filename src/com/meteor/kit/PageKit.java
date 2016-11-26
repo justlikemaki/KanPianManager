@@ -1311,11 +1311,11 @@ public class PageKit {
 	private static String getBase64Img(String imgurl){
 		String tmpdir= MainConfig.tmpsavedir;//PropKit.get("tmpsavedir");
 		String img = "";
-		Map head = new HashMap();
+		Map head = HttpClientHelp.getDefaultHeader();
 //		String ref=PropKit.get("uncensoredhost");
 //		head.put("Referer", ref);
 		imgurl = PageKit.replace20All(imgurl);
-		String res = HttpClientHelp.getFileDownByPath(imgurl, tmpdir, 1, head,false);
+		String res = HttpClientHelp.getFileDownByPath(imgurl, tmpdir, 1, head,true);
 		Map<String, String> p = JsonKit.json2Map(res);
 		if (p.get("status").equals("0")) {
 			img = SecurityEncodeKit.GetImageStr(p.get("filepath"));
