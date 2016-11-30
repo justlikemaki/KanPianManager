@@ -243,23 +243,23 @@ public class HttpClientHelp {
 	}
 	
 	public static CloseableHttpClient getOtherHttpClient() {
-		// other_connectionManager.closeExpiredConnections();
+		other_connectionManager.closeExpiredConnections();
 		// 可选的, 关闭自定义秒内不活动的连接
 		other_connectionManager.closeIdleConnections(CLOSE_INACTIVE_CONNECTIONS_SECONDS, TimeUnit.SECONDS);
 
 		if (other_httpClient == null) {
-			other_httpClient = HttpClients.custom().setConnectionManager(other_connectionManager).build();
+			other_httpClient = HttpClients.custom().setConnectionManagerShared(true).setConnectionManager(other_connectionManager).build();
 		}
 		return other_httpClient;
 	}
 
 	private static CloseableHttpClient getHttpClient() {
-		// connectionManager.closeExpiredConnections();
+		connectionManager.closeExpiredConnections();
 		// 可选的, 关闭自定义秒内不活动的连接
 		connectionManager.closeIdleConnections(CLOSE_INACTIVE_CONNECTIONS_SECONDS, TimeUnit.SECONDS);
 
 		if (httpClient == null) {
-			httpClient = HttpClients.custom().setConnectionManager(connectionManager).build();
+			httpClient = HttpClients.custom().setConnectionManagerShared(true).setConnectionManager(connectionManager).build();
 		}
 		return httpClient;
 	}

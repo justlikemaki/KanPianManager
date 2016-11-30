@@ -565,7 +565,8 @@ public class PageKit {
 		try {
 			String bthost=PropKit.get("bthost3");
 			String url=bthost+java.net.URLEncoder.encode(sv,"UTF-8");
-			String html=HttpClientHelp.doGet(url);
+			Map headers = HttpClientHelp.getDefaultHeader();
+			String html=HttpClientHelp.doGet(url, null, headers, true);
 
 			Document doc = Jsoup.parse(html);
 			Elements news = doc.select(".data-list .row");
@@ -624,7 +625,8 @@ public class PageKit {
 	private static BtList getbtlist3(Element one) throws Exception{
 		String btname=one.child(0).attr("title");
 		String baseurl=one.child(0).attr("href");
-		String basehtml= HttpClientHelp.doGet(baseurl);
+		Map headers = HttpClientHelp.getDefaultHeader();
+		String basehtml=HttpClientHelp.doGet(baseurl, null, headers, true);
 		Document basedoc = Jsoup.parse(basehtml);
 		Elements basenews = basedoc.select(".magnet-link");
 		String btlink=basenews.get(0).text();
@@ -644,7 +646,8 @@ public class PageKit {
 		try {
 			String bthost=PropKit.get("bthost2");
 			String url=bthost+java.net.URLEncoder.encode(sv,"UTF-8")+"/";
-			String html=HttpClientHelp.doGet(url);
+			Map headers = HttpClientHelp.getDefaultHeader();
+			String html=HttpClientHelp.doGet(url, null, headers, true);
 
 			Document doc = Jsoup.parse(html);
 			Elements news = doc.select("#archiveResult tr");
@@ -723,7 +726,8 @@ public class PageKit {
 		try {
 			String bthost=PropKit.get("bthost");
 			String url=bthost+"?page=search&cats=0_0&filter=0&term="+java.net.URLEncoder.encode(sv,"UTF-8");
-			String html=HttpClientHelp.doGet(url);
+			Map headers = HttpClientHelp.getDefaultHeader();
+			String html=HttpClientHelp.doGet(url, null, headers, true);
 
 			Document doc = Jsoup.parse(html);
 			Elements news = doc.select(".tlistrow");
@@ -812,7 +816,8 @@ public class PageKit {
 		String baseurl=tlistname.get(0).getElementsByTag("a").attr("href");
 		baseurl=protocol+baseurl;
 		String btname=tlistname.get(0).getElementsByTag("a").text();
-		String basehtml= HttpClientHelp.doGet(baseurl);
+		Map headers = HttpClientHelp.getDefaultHeader();
+		String basehtml=HttpClientHelp.doGet(baseurl, null, headers, true);
 		Document basedoc = Jsoup.parse(basehtml);
 		Elements basenews = basedoc.select(".viewdownloadbutton");
 		String btlink=basenews.get(0).getElementsByTag("a").attr("href");

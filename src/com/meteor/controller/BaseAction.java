@@ -802,6 +802,7 @@ public class BaseAction extends Controller {
 	public void tobase64(){
 		try {
 			PageKit.tobase64();
+			PageKit.tobase64By503();
 			renderText("成功");
 		} catch (Exception e) {
 			logger.error("图片转换异常: " + e.toString());
