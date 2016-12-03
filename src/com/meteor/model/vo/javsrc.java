@@ -1,5 +1,6 @@
 package com.meteor.model.vo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,6 +23,7 @@ public class javsrc {
     private String sbm,sbmsb;
     private List<String> tagslist, btfilelist, btnamelist;
     private String imgsrccg;
+    private List<String> btfilelistcg;
 
     public String getSbmsb() {
         sbmsb= PageKit.getSbmByTitle(title);
@@ -150,6 +152,7 @@ public class javsrc {
 
     public void setBtfile(String btfile) {
         this.btfile = btfile;
+        initTorsrccg();
     }
 
     public String getBtname() {
@@ -173,12 +176,32 @@ public class javsrc {
         this.imgsrccg = imgsrccg;
     }
 
-    private void initImgsrccg(){
+    public List<String> getBtfilelistcg() {
+		return btfilelistcg;
+	}
+
+	public void setBtfilelistcg(List<String> btfilelistcg) {
+		this.btfilelistcg = btfilelistcg;
+	}
+
+	private void initImgsrccg(){
         String rootdir= PropKit.get("rootdir");
         this.imgsrccg=this.imgsrc;
         if(StringUtils.isNotBlank(this.imgsrc) && this.imgsrccg.contains(PageKit.getimgBase64Tip())){
             this.imgsrccg=rootdir+"/interface/imgbase/"+id;
             this.imgsrc=null;
+        }
+    }
+	
+	private void initTorsrccg(){
+        String rootdir= PropKit.get("rootdir");
+        this.btfilelistcg=getBtfilelist();
+        if(StringUtils.isNotBlank(this.btfile) && this.btfile.contains(PageKit.gettorBase64Key())){
+        	List<String> newlisttor = new ArrayList<String>();
+            for (String tor:this.btfilelistcg) {
+            	newlisttor.add(rootdir+"/interface/torbase/"+tor);
+			}
+            this.btfilelistcg=newlisttor;
         }
     }
 }

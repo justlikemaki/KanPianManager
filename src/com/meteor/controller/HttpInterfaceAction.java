@@ -25,6 +25,7 @@ import com.meteor.kit.PageKit;
 import com.meteor.kit.PgsqlKit;
 import com.meteor.kit.SecurityEncodeKit;
 import com.meteor.model.po.javsrc;
+import com.meteor.model.po.javtor;
 import com.meteor.model.vo.SearchQueryP;
 
 /**
@@ -205,6 +206,34 @@ public class HttpInterfaceAction extends Controller {
 		} catch (Exception e) {
 			logger.error("imgbase: " + e.toString());
 			renderText("请求图片出错");
+		}
+	}
+	
+	public void torbase(){
+		try {
+			String oneid=getPara();
+			oneid=oneid.replace(PageKit.gettorBase64Key(), "");
+			javtor js = (javtor) PgsqlKit.findById(ClassKit.javtorClass, oneid);
+			String tor=js.getTorbase();
+			byte[] torbytes=SecurityEncodeKit.GenerateImage(tor);
+			if(torbytes!=null) {
+				HttpServletResponse response=getResponse();
+				response.setHeader("content-disposition", "inline; filename="+oneid+".torrent");
+				response.setContentType("application/x-bittorrent");
+				response.setContentLength(torbytes.length);
+				response.setHeader("Accept-Ranges", "bytes");
+				OutputStream out = response.getOutputStream();
+				out.write(torbytes);
+				out.flush();
+				out.close();
+				renderNull();
+			}else{
+				logger.error("torbase: " +"不是base64编码的种子");
+				renderText("请求种子出错");
+			}
+		} catch (Exception e) {
+			logger.error("torbase: " + e.toString());
+			renderText("请求种子出错");
 		}
 	}
 }

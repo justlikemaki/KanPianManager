@@ -111,10 +111,13 @@ public class PgsqlKit {
             Page<Record> pr = Db.paginate(p.getNowpage(), p.getCount(), "select * ",sql );
             res.put("list",BeanKit.copyRec( pr.getList(),clazz));
             res.put("count",pr.getTotalRow());
+            res.put("select", p.getCount());
             return res;
         }else{
-            res.put("list",findByConditionAll(clazz,sql));
+        	List l = findByConditionAll(clazz,sql);
+            res.put("list",l);
             res.put("count",0);
+            res.put("select", l.size());
             return res;
         }
     }

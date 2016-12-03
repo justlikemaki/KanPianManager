@@ -357,7 +357,7 @@ function onekydownClick(){
 $(".onekydown").on("click",onekydownClick);
 
 function createPackage(iszip,bts,imgs,basedir,thisobj,id){
-    var btlist=bts.join("--");
+    var btlist=bts.join("-9-");
     $.post('manager/createPackage',{"btlist":btlist,"oneid":id,"basedir":basedir,"iszip":iszip},function(data) {
         if(data=="is_ok"){
             changeScheduleBar(id,"1");

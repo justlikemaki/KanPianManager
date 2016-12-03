@@ -50,6 +50,7 @@ import com.meteor.kit.http.MultitDownload;
 import com.meteor.kit.http.TaskThreadManagers;
 import com.meteor.model.po.errpage;
 import com.meteor.model.po.javsrc;
+import com.meteor.model.po.javtor;
 import com.meteor.model.vo.InExl;
 import com.meteor.model.vo.SearchQueryP;
 import com.mongodb.BasicDBList;
@@ -62,52 +63,6 @@ public class BaseAction extends Controller {
 	/**
 	 * @author Meteor
 	 * @Title
-	 * @category 从mongo数据库获取数据
-	 */
-	public void addMongoData() throws Exception {
-
-		Page<Record> page = MongoKit.paginate("JavSrc", 1,20000, null, null, null);
-		for(Record rec:page.getList()){
-			rec.set("id", rec.get("_id").toString());
-			rec.set("tags", JsonKit.bean2JSON(rec.get("tags")));
-
-			BasicDBList bd=rec.get("btfile");
-			if(rec.get("btfile")==null|| bd.size()==0 ||rec.get("btfile").equals("[ ]")){
-				rec.remove("btfile");
-			}else{
-				rec.set("btfile",JsonKit.bean2JSON(rec.get("btfile")));
-			}
-
-			bd=rec.get("btname");
-			if(rec.get("btname")==null|| bd.size()==0||rec.get("btname").equals("[ ]")){
-				rec.remove("btname");
-			}else{
-				rec.set("btname",JsonKit.bean2JSON(rec.get("btname")));
-			}
-			rec.remove("_id");
-			rec.remove("_class");
-
-			//Db.save("javsrc",rec);
-			PgsqlKit.save("javsrc",rec.getColumns());
-		}
-
-		Page<Record> page1 = MongoKit.paginate("companys", 1, 1000, null, null, null);
-		for(Record rec:page1.getList()){
-			rec.set("id", rec.get("_id").toString());
-			rec.remove("count");
-			rec.remove("_id");
-			rec.remove("_class");
-
-			//Db.save("companys",rec);
-			PgsqlKit.save("companys",rec.getColumns());
-		}
-
-		renderText("ok");
-	}
-
-	/**
-	 * @author Meteor
-	 * @Title
 	 * @category 删除本地数据库的数据
 	 */
 	public void delData() throws Exception {
@@ -115,8 +70,6 @@ public class BaseAction extends Controller {
 		PgsqlKit.deleteCollectionAllData("javsrc");
 		renderText("ok");
 	}
-
-
 	
 	/**
 	 * 
@@ -695,7 +648,7 @@ public class BaseAction extends Controller {
 			String img=js.getImgsrc();
 			if (img.contains("data:image/")) {
 				img = img.replace(PageKit.getimgBase64Tip(), "");
-				String filename = DateKit.getUUID() + ".jpg";
+				String filename = oneid + ".jpg";
 				String filedest = filepath + filename;
 				SecurityEncodeKit.GenerateImage(img, filedest);
 			} else if (img.contains(rootsavedir)) {
@@ -722,9 +675,16 @@ public class BaseAction extends Controller {
 		boolean isDownloadOne=false;
 		String reCode="0";
 		try {
-			String[] bts = btlist.split("--");
+			String[] bts = btlist.split("-9-");
 			for (int i = 0; i < bts.length; i++) {
-				if (bts[i].contains(rootsavedir)) {
+				if (bts[i].contains(PageKit.gettorBase64Key())) {
+					String torid=bts[i].split(PageKit.gettorBase64Key())[1];
+					javtor js = (javtor) PgsqlKit.findById(ClassKit.javtorClass, torid);
+					String tor=js.getTorbase();
+					String filename = torid + ".torrent";
+					String filedest = filepath + filename;
+					SecurityEncodeKit.GenerateImage(tor, filedest);
+				} else if (bts[i].contains(rootsavedir)) {
 					String bt = bts[i].replace(rootsavedir, "");
 					String fileorig = fileorigpath + bt;
 					String filename = bts[i].substring(bts[i].lastIndexOf("/") + 1, bts[i].length());
@@ -917,6 +877,20 @@ public class BaseAction extends Controller {
 		} catch (IOException e) {
 			logger.error("修改配置文件异常: " + e.toString());
 			renderText("修改配置文件异常");
+		}
+	}
+	
+	public void classcalTo64(){
+		try {
+			PageKit.classicalTobase64(getRequest());
+			renderText("转换成功");
+		} catch (Exception e) {
+			logger.error("转换文件异常: " + e.toString());
+			renderText("转换文件异常");
+		} catch (Throwable t) {
+			classcalTo64();
+			logger.error("转换文件异常: " + t.toString());
+			renderText("转换文件异常");
 		}
 	}
 

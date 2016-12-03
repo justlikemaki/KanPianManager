@@ -31,66 +31,9 @@ public class WebAction extends Controller {
 
 	@Clear
 	public void tologin(){
-
-//		try {
-//			SearchQueryP sp=new SearchQueryP();
-//			sp.setCount(0);
-//			sp.setNowpage(0);
-//			sp.setSorttype("desc");
-//			sp.setSortname("id");
-//			Map mp=new HashMap();
-//			mp.put("LIKE_num", "--");
-//			sp.setParameters(mp);
-//			List<errpage> searchlist = new ArrayList<errpage>();
-//			Map res= null;
-//			res = PgsqlKit.findByCondition(ClassKit.errClass, sp);
-//			searchlist = (List<errpage>) res.get("list");
-//			for( errpage ep:searchlist){
-//				String[] numarr=ep.getNum().split("--");
-//				int bg=Integer.valueOf(numarr[0]);
-//				int ed=Integer.valueOf(numarr[1]);
-//				for (int i=bg;i<=ed;i++){
-//					errpage err= new errpage(ep.getType(),i+"","numlist",ep.getSearchkey());
-//					PgsqlKit.save(ClassKit.errTableName, err);
-//				}
-//				PgsqlKit.deleteById(ClassKit.errTableName, ep.getId());
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-
-//		try {
-//
-//			SearchQueryP sp=new SearchQueryP();
-//			sp.setCount(0);
-//			sp.setNowpage(0);
-//			sp.setSorttype("desc");
-//			sp.setSortname("id");
-//			Map mp=new HashMap();
-//			mp.put("LIKE_imgsrc", ".netcdn.xyz");
-//			mp.put("tabtype", "censored");
-//			sp.setParameters(mp);
-//			List<javsrc> searchlist = new ArrayList<javsrc>();
-//			Map res= null;
-//			res = PgsqlKit.findByCondition(ClassKit.javClass, sp);
-//			searchlist = (List<javsrc>) res.get("list");
-//			for( javsrc jav:searchlist){
-//				String img=jav.getImgsrc();
-//				String repstr=img.substring(0,30);
-//				img=img.replace(repstr,"http://pics.dmm.co.jp/");
-//				jav.setImgsrc(img);
-//
-//				String jsonbean=JsonKit.bean2JSON(jav);
-//				Map p= JsonKit.json2Bean(jsonbean, HashMap.class);
-//				PgsqlKit.updateById(ClassKit.javTableName, p);
-//			}
-//
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-
 		render("login.jsp");
 	}
+	
 	@Clear
 	public void login(){
 		String root=getPara("root");

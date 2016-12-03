@@ -36,6 +36,7 @@ import com.meteor.kit.getpage.PageRun;
 import com.meteor.kit.http.HttpClientHelp;
 import com.meteor.kit.http.HttpUtilKit;
 import com.meteor.model.po.javsrc;
+import com.meteor.model.po.javtor;
 import com.meteor.model.vo.BtList;
 import com.meteor.model.vo.CompDate;
 import com.meteor.model.vo.CompDls;
@@ -47,6 +48,7 @@ public class PageKit {
 	private final static Logger logger = LoggerFactory.getLogger(PageKit.class);
 	private static String imgBase64Tip="data:image/jpg;base64,";
 	private static String imgReplcKey="netcdn.space";
+	private static String torBase64Key="tor64--";
 	private static Map<String,String> tabtype=new HashMap<String, String>();
 	static {
 		tabtype.put("0","newspage");
@@ -62,6 +64,10 @@ public class PageKit {
 
 	public static String getimgBase64Tip(){
 		return imgBase64Tip;
+	}
+	
+	public static String gettorBase64Key(){
+		return torBase64Key;
 	}
 
 	public static boolean hasTabType(String value){
@@ -1557,5 +1563,83 @@ public class PageKit {
 			res = "获取草榴网址异常";
 		}
 		return res;
+	}
+	
+	public static boolean classicalTobase64(HttpServletRequest request){ 
+		try {
+			String rootsavedir = PropKit.get("rootsavedir");
+			SearchQueryP p = new SearchQueryP();
+//			p.setCount(500);
+//			p.setNowpage(1);
+			Map mp = new HashMap();
+			mp.put("tabtype","classical");
+			mp.put("isstar","1");
+			p.setParameters(mp);
+			Map res = PgsqlKit.findByCondition(ClassKit.javClass, p);
+			List<javsrc> srcs = (List<javsrc>) res.get("list");
+			logger.error("待转换数据数量："+res.get("select"));
+//			String localpath = PageKit.getfilePath(request).replace("\\KanPianManager", "");
+			String localpath = PageKit.getfilePath(request);
+			for (Iterator iterator = srcs.iterator(); iterator.hasNext();) {
+				javsrc javsrc = (javsrc) iterator.next();		
+				boolean isTo64img = false;
+				boolean isTo64tor = false;
+				//存在的记录直接跳过
+				Map ps =new HashMap();
+				ps.put("srcid", javsrc.getId());
+				List l= PgsqlKit.findall(ClassKit.javtorClass, ps);
+				if(l.size()!=0){
+					continue;
+				}
+				//转换图片
+				String imgpath = localpath + javsrc.getImgsrc();
+				if(javsrc.getImgsrc()!=null && javsrc.getImgsrc().startsWith("/"+rootsavedir)){
+					String img = SecurityEncodeKit.GetImageStr(imgpath);
+					if (StringUtils.isNotBlank(img)) {
+						img = PageKit.getimgBase64Tip() + img;
+						javsrc.setImgsrc(img);
+						isTo64img = true;
+					}
+				}
+				//转换种子
+				String torpath = null;
+				List<String> listtor = JsonKit.json2List(javsrc.getBtfile());
+				if(listtor!=null && javsrc.getBtfile().contains("/"+rootsavedir)){
+					List<String> newlisttor = new ArrayList<String>();
+					for (String tor:listtor) {
+						torpath = localpath + tor;
+						String torstr = SecurityEncodeKit.GetImageStr(torpath);
+						if (StringUtils.isNotBlank(torstr)) {
+							javtor javtor = new javtor(javsrc.getId(),torstr);
+							PgsqlKit.save(ClassKit.javtorTableName,javtor);
+							newlisttor.add(PageKit.gettorBase64Key()+javtor.getId());
+							isTo64tor = true;
+						}
+					}
+				}
+				if(!isTo64img && !isTo64tor){
+					logger.error(javsrc.getId()+"转换失败,等待下一次转换。");
+				}else{
+					javsrc.setIsstar("2");
+					Map pp=JsonKit.json2Map(JsonKit.bean2JSON(javsrc));
+					PgsqlKit.updateById(ClassKit.javTableName, pp);
+					if(isTo64img){
+						new FileOperateKit().delNotEmptyFolder(imgpath);
+					}else{
+						new FileOperateKit().delNotEmptyFolder(torpath);
+					}
+				}
+			}
+			
+			ServletContext sc = request.getSession().getServletContext();
+			String realpath = sc.getRealPath("");
+			String rootpath = realpath + "/" + rootsavedir;
+//			rootpath = rootpath.replace("\\KanPianManager", "");
+			new FileOperateKit().loopDelEmptyFolder(rootpath);
+			return true;
+		} catch (Exception e) {
+			logger.error("转换资源出错",e);
+			return false;
+		}
 	}
 }

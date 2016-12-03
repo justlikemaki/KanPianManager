@@ -4,10 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -17,6 +15,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Zip;
@@ -275,10 +274,11 @@ public class SecurityEncodeKit {
 				}
 			}
 			// 生成jpeg图片
-			OutputStream out = new FileOutputStream(imgFilePath);
-			out.write(bytes);
-			out.flush();
-			out.close();
+//			OutputStream out = new FileOutputStream(imgFilePath);
+//			out.write(bytes);
+//			out.flush();
+//			out.close();			
+			FileUtils.writeByteArrayToFile(new File(imgFilePath), bytes);
 			return true;
 		} catch (Exception e) {
 			return false;

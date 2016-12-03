@@ -52,8 +52,12 @@
 		<button id="readuuid" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
 			读取并刷新设备号
 		</button>
+		<hr>
 		<button id="tobase64" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
 			CDN图片转BASE64
+		</button>
+		<button id="classtobase64" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+			经典资源转BASE64
 		</button>
 		<hr>
 		<div class="settingtwo">

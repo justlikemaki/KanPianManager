@@ -67,6 +67,15 @@ $("#tobase64").on("click",function(){
     }
 })
 
+$("#classtobase64").on("click",function(){
+    if(confirm("确定么?")){
+        $.post("manager/classcalTo64",function(data){
+            alert(data);
+        })
+    }
+})
+
+
 $("#updatecache").on("click",function(){
     if(confirm("确定么?")){
         $.post("manager/updateCache",function(data){
