@@ -45,7 +45,6 @@ public class WebAppListen implements ServletContextListener{
 		ServletContext sct;
 		/**
 		 * 构造
-		 * @param webCacheRefreshService application
 		 * @param sct application
 		 */
 		public AutoThread(ServletContext sct){
