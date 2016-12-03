@@ -3,7 +3,9 @@
  */
 package com.meteor.controller;
 
+import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -11,6 +13,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -182,7 +185,8 @@ public class HttpInterfaceAction extends Controller {
 		}
 	}
 
-	public void imgbase(){
+	public void imgbase() throws IOException{
+		OutputStream out = null;
 		try {
 			String oneid=getPara();
 			javsrc js = (javsrc) PgsqlKit.findById(ClassKit.javClass, oneid);
@@ -194,22 +198,33 @@ public class HttpInterfaceAction extends Controller {
 				response.setContentType("image/jpeg");
 				response.setContentLength(imgbytes.length);
 				response.setHeader("Accept-Ranges", "bytes");
-				OutputStream out = response.getOutputStream();
+				out = response.getOutputStream();
 				out.write(imgbytes);
 				out.flush();
 				out.close();
 				renderNull();
+				return;
 			}else{
 				logger.error("imgbase: " +"不是base64编码的图片");
-				renderText("请求图片出错");
 			}
-		} catch (Exception e) {
-			logger.error("imgbase: " + e.toString());
-			renderText("请求图片出错");
+		} catch (Exception e) {		
+			if(e.toString().contains("Connection reset by peer")){
+				renderNull();			
+				return;
+			}else{
+				logger.error("imgbase: " + e.toString());
+			}
+		} finally {
+			if(out!=null) {
+				out.close();
+				out=null;
+			}
 		}
+		renderText("请求图片出错");
 	}
 	
-	public void torbase(){
+	public void torbase() throws IOException{
+		OutputStream out = null;
 		try {
 			String oneid=getPara();
 			oneid=oneid.replace(PageKit.gettorBase64Key(), "");
@@ -222,18 +237,28 @@ public class HttpInterfaceAction extends Controller {
 				response.setContentType("application/x-bittorrent");
 				response.setContentLength(torbytes.length);
 				response.setHeader("Accept-Ranges", "bytes");
-				OutputStream out = response.getOutputStream();
+				out = response.getOutputStream();
 				out.write(torbytes);
 				out.flush();
 				out.close();
-				renderNull();
+				renderNull();			
+				return;
 			}else{
 				logger.error("torbase: " +"不是base64编码的种子");
-				renderText("请求种子出错");
 			}
 		} catch (Exception e) {
-			logger.error("torbase: " + e.toString());
-			renderText("请求种子出错");
+			if(e.toString().contains("Connection reset by peer")){
+				renderNull();			
+				return;
+			}else{
+				logger.error("torbase: " + e.toString());
+			}
+		} finally {
+			if(out!=null) {
+				out.close();
+				out=null;
+			}
 		}
+		renderText("请求种子出错");
 	}
 }
