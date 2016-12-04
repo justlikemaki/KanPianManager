@@ -203,7 +203,7 @@ public class CzExlKit {
 	public static List<InExl> refreshFileList(List<InExl> filelist,String strPath) {
         File dir = new File(strPath); 
         File[] files = dir.listFiles(); 
-        if (files == null){ 
+        if (files == null || files.length==0){ 
             return filelist;
         }
         String parentName=files[0].getParentFile().getName();

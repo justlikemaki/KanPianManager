@@ -361,6 +361,14 @@ public class PageKit {
 		basePath = basePath + rootsavedir;
 		return basePath;
 	}
+	
+	public static String formatLocalpath(String filepath){
+		filepath = filepath.replace("//", "/");
+		filepath = filepath.replace("\\\\", "\\");
+		filepath = filepath.replace("/\\", "/");
+		filepath = filepath.replace("\\/", "/");
+		return filepath;
+	}
 
 	public static String getfilePath(HttpServletRequest request) {
 		String rootsavedir = PropKit.get("rootsavedir");
@@ -369,10 +377,10 @@ public class PageKit {
 		String contentPath = sc.getContextPath().replace("/", "");
 		String filepath = null;
 		if (StringUtils.isNotBlank(contentPath)) {
-			filepath = realpath.replace(contentPath, rootsavedir);
-		} else {
-			filepath = realpath + "/" + rootsavedir;
-		}
+			filepath = realpath.replace(contentPath, "");
+		} 
+		filepath = filepath + "/" + rootsavedir;
+		filepath = formatLocalpath(filepath);
 		return filepath;
 	}
 
@@ -388,14 +396,16 @@ public class PageKit {
 	public static String copypath(HttpServletRequest request, String onedir, String twodir, String filename) {
 		String filepath = getfilePath(request);
 		String nowdate = DateKit.getStringDateShort();
-		filepath = filepath + nowdate + "/" + onedir + "/" + twodir + "/" + filename;
+		filepath = filepath +"/"+nowdate + "/" + onedir + "/" + twodir + "/" + filename;
+		filepath = formatLocalpath(filepath);
 		return filepath;
 	}
 
 	public static String copypathold(HttpServletRequest request, String oldpath) {
 		String rootsavedir = PropKit.get("rootsavedir");
 		String filepath = getfilePath(request);
-		filepath = filepath + oldpath.replace("/" + rootsavedir, "");
+		filepath = filepath + "/"+oldpath.replace("/" + rootsavedir, "");
+		filepath = formatLocalpath(filepath);
 		return filepath;
 	}
 
@@ -407,9 +417,9 @@ public class PageKit {
 		String filepath = null;
 		if (StringUtils.isNotBlank(contentPath)) {
 			filepath = path.replace(contentPath, rootsavedir);
-		} else {
-			filepath = path + "/" + rootsavedir;
 		}
+		filepath = filepath + "/" + rootsavedir;
+		filepath = formatLocalpath(filepath);
 		return filepath;
 	}
 
@@ -425,7 +435,8 @@ public class PageKit {
 	public static String webpath(HttpServletRequest request, String onedir, String twodir, String filename) {
 		String nowdate = DateKit.getStringDateShort();
 		String path = getwebfilePath(request);
-		String webpath = path + nowdate + "/" + onedir + "/" + twodir + "/" + filename;
+		String webpath = path +"/"+nowdate + "/" + onedir + "/" + twodir + "/" + filename;
+		webpath = formatLocalpath(webpath);
 		return webpath;
 	}
 
@@ -433,7 +444,8 @@ public class PageKit {
 		String rootsavedir = PropKit.get("rootsavedir");
 		String nowdate = DateKit.getStringDateShort();
 		String path = getwebfilePath(request);
-		String webpath = path + oldpath.replace("/" + rootsavedir, "");
+		String webpath = path + "/"+oldpath.replace("/" + rootsavedir, "");
+		webpath = formatLocalpath(webpath);
 		return webpath;
 	}
 
@@ -1578,8 +1590,7 @@ public class PageKit {
 			Map res = PgsqlKit.findByCondition(ClassKit.javClass, p);
 			List<javsrc> srcs = (List<javsrc>) res.get("list");
 			logger.error("待转换数据数量："+res.get("select"));
-//			String localpath = PageKit.getfilePath(request).replace("\\KanPianManager", "");
-			String localpath = PageKit.getfilePath(request);
+			String localpath = PageKit.getfilePath(request).replace(rootsavedir, "");
 			for (Iterator iterator = srcs.iterator(); iterator.hasNext();) {
 				javsrc javsrc = (javsrc) iterator.next();		
 				boolean isTo64img = false;
@@ -1589,10 +1600,11 @@ public class PageKit {
 				ps.put("srcid", javsrc.getId());
 				List l= PgsqlKit.findall(ClassKit.javtorClass, ps);
 				if(l.size()!=0){
-					continue;
+					isTo64tor = true;
 				}
 				//转换图片
 				String imgpath = localpath + javsrc.getImgsrc();
+				imgpath = PageKit.formatLocalpath(imgpath);
 				if(javsrc.getImgsrc()!=null && javsrc.getImgsrc().startsWith("/"+rootsavedir)){
 					String img = SecurityEncodeKit.GetImageStr(imgpath);
 					if (StringUtils.isNotBlank(img)) {
@@ -1603,23 +1615,30 @@ public class PageKit {
 				}
 				//转换种子
 				String torpath = null;
-				List<String> listtor = JsonKit.json2List(javsrc.getBtfile());
-				if(listtor!=null && javsrc.getBtfile().contains("/"+rootsavedir)){
-					List<String> newlisttor = new ArrayList<String>();
-					for (String tor:listtor) {
-						torpath = localpath + tor;
-						String torstr = SecurityEncodeKit.GetImageStr(torpath);
-						if (StringUtils.isNotBlank(torstr)) {
-							javtor javtor = new javtor(javsrc.getId(),torstr);
-							PgsqlKit.save(ClassKit.javtorTableName,javtor);
-							newlisttor.add(PageKit.gettorBase64Key()+javtor.getId());
-							isTo64tor = true;
+				if(!isTo64tor){
+					List<String> listtor = JsonKit.json2List(javsrc.getBtfile());
+					if(listtor!=null && javsrc.getBtfile().contains("/"+rootsavedir)){
+						List<String> newlisttor = new ArrayList<String>();
+						for (String tor:listtor) {
+							torpath = localpath + tor;
+							torpath = PageKit.formatLocalpath(torpath);
+							String torstr = SecurityEncodeKit.GetImageStr(torpath);
+							if (StringUtils.isNotBlank(torstr)) {
+								javtor javtor = new javtor(javsrc.getId(),torstr);
+								PgsqlKit.save(ClassKit.javtorTableName,javtor);
+								newlisttor.add(PageKit.gettorBase64Key()+javtor.getId());
+								isTo64tor = true;
+							}
 						}
+						javsrc.setBtfile(JsonKit.bean2JSON(newlisttor));
 					}
 				}
 				if(!isTo64img && !isTo64tor){
 					logger.error(javsrc.getId()+"转换失败,等待下一次转换。");
 				}else{
+//					if(isTo64img && isTo64tor){
+//						javsrc.setIsstar("2");
+//					}
 					javsrc.setIsstar("2");
 					Map pp=JsonKit.json2Map(JsonKit.bean2JSON(javsrc));
 					PgsqlKit.updateById(ClassKit.javTableName, pp);
@@ -1630,12 +1649,10 @@ public class PageKit {
 					}
 				}
 			}
-			
-			ServletContext sc = request.getSession().getServletContext();
-			String realpath = sc.getRealPath("");
-			String rootpath = realpath + "/" + rootsavedir;
-//			rootpath = rootpath.replace("\\KanPianManager", "");
+
+			String rootpath = PageKit.getfilePath(request);
 			new FileOperateKit().loopDelEmptyFolder(rootpath);
+			logger.error("转换成功");
 			return true;
 		} catch (Exception e) {
 			logger.error("转换资源出错",e);

@@ -352,25 +352,8 @@ public class BaseAction extends Controller {
 				Future future = pool.submit(new Callable() {
 					@Override
 					public Object call() throws Exception {
-						//System.out.println(Thread.currentThread().getName());
-						SearchQueryP p=new SearchQueryP();
-						p.setCount(0);
-						p.setNowpage(0);
-						Map mp=new HashMap();
-						mp.put("tabtype", "classical");
-						p.setParameters(mp);
-						List<javsrc> srcs = new ArrayList<javsrc>();
-						Map res=PgsqlKit.findByCondition(ClassKit.javClass, p);
-						srcs = (List<javsrc>) res.get("list");
-						List<String> tiltles=new ArrayList();
-						Iterator<javsrc> it=srcs.iterator();
-						while(it.hasNext()){
-							javsrc one=it.next();
-							tiltles.add(one.getTitle());
-						}
-						String oldclass=tiltles.toString();
 						logger.error("正在导入数据");
-						return Thread.currentThread().getName()+":"+writeDisk(onelist, request,oldclass);
+						return Thread.currentThread().getName()+":"+writeDisk(onelist, request,null);
 					}
 				});
 				fetures.add(future);
@@ -384,6 +367,8 @@ public class BaseAction extends Controller {
 				}
 			}
 			pool.shutdown();
+			//本地资源转数据库
+			classcalTo64();
 			renderText(sb.toString());
 		} catch (Exception e) {
 			logger.error("uploadExl: " + e.toString());
@@ -411,9 +396,17 @@ public class BaseAction extends Controller {
 				tags.add(ine.getTypeDirMc().toUpperCase());
 				js.setTags(JsonKit.bean2JSON(tags));
 				//这里用title去查一遍比较好，但是会慢
-				Pattern p=Pattern.compile(js.getTitle()+",",Pattern.CASE_INSENSITIVE); 
-				Matcher m=p.matcher(oldclass); 
-				Boolean goflag=m.find();
+				SearchQueryP p=new SearchQueryP();
+				Map mp=new HashMap();
+				mp.put("tabtype", "classical");
+				mp.put("LIKE_sbm", js.getSbm());
+				p.setParameters(mp);
+				Map res=PgsqlKit.findByCondition(ClassKit.javClass, p);
+				List<javsrc> srcs = (List<javsrc>) res.get("list");
+				boolean goflag = false;
+				if(srcs!=null && srcs.size()>0){
+					goflag = true;
+				}
 				if(!goflag){
 					List btfile=new ArrayList();
 					List btname=new ArrayList();
@@ -435,7 +428,7 @@ public class BaseAction extends Controller {
 				        File src=new File(filepaths);
 				        FileUtils.copyFile(src,f);
 				        filepaths="/"+filepath.substring(filepath.indexOf("javsrc"));
-				        
+				        filepaths=PageKit.formatLocalpath(filepaths);
 						if(filenames.indexOf(".torrent")>=0){					        
 							btfile.add(filepaths);
 							btname.add(filenames);
