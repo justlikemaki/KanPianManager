@@ -881,8 +881,8 @@ public class BaseAction extends Controller {
 			logger.error("转换文件异常: " + e.toString());
 			renderText("转换文件异常");
 		} catch (Throwable t) {
-			classcalTo64();
 			logger.error("转换文件异常: " + t.toString());
+			classcalTo64();
 			renderText("转换文件异常");
 		}
 	}

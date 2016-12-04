@@ -797,20 +797,18 @@ public class FileOperateKit {
 		//String p3="D:\\Development\\文档+架构包";
 		//String p4="G:\\DATA\\!!SSDBK\\Development\\文档+架构包";
 		//fastCopyFile(p1,1,p2,p1,"");
-		new FileOperateKit().delNotEmptyFolder("D:\\Development\\Servers\\Tomcats\\apache-tomcat-7.0.59\\wtpwebapps\\tt\\dd\\cc\\ABS-110\\ABS-110.jpg");
 		new FileOperateKit().loopDelEmptyFolder("D:\\Development\\Servers\\Tomcats\\apache-tomcat-7.0.59\\wtpwebapps\\tt");
 	}
-
-	public void delNotEmptyFolder(String filePath) {
-		try {
-			int index = filePath.lastIndexOf("/");
-			index = index == -1 ? filePath.lastIndexOf("\\") : index;
-			String folderPath=filePath.substring(0,index);
-			delAllFile(folderPath);
-			File myFilePath = new File(folderPath);
-			myFilePath.delete();
-		} catch (Exception e) {
-			e.printStackTrace();
+	
+	public void delFileList(List<String> filePath) {
+		for (String path : filePath) {
+			try {
+				File myFilePath = new File(path);
+				myFilePath.delete();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 		}
 	}
 	

@@ -1581,7 +1581,7 @@ public class PageKit {
 		try {
 			String rootsavedir = PropKit.get("rootsavedir");
 			SearchQueryP p = new SearchQueryP();
-//			p.setCount(500);
+//			p.setCount(100);
 //			p.setNowpage(1);
 			Map mp = new HashMap();
 			mp.put("tabtype","classical");
@@ -1595,6 +1595,7 @@ public class PageKit {
 				javsrc javsrc = (javsrc) iterator.next();		
 				boolean isTo64img = false;
 				boolean isTo64tor = false;
+				List<String> filesPath = new ArrayList<String>();
 				//存在的记录直接跳过
 				Map ps =new HashMap();
 				ps.put("srcid", javsrc.getId());
@@ -1605,13 +1606,16 @@ public class PageKit {
 				//转换图片
 				String imgpath = localpath + javsrc.getImgsrc();
 				imgpath = PageKit.formatLocalpath(imgpath);
-				if(javsrc.getImgsrc()!=null && javsrc.getImgsrc().startsWith("/"+rootsavedir)){
+				if(StringUtils.isNotBlank(javsrc.getImgsrc()) && javsrc.getImgsrc().startsWith("/"+rootsavedir)){
 					String img = SecurityEncodeKit.GetImageStr(imgpath);
 					if (StringUtils.isNotBlank(img)) {
+						filesPath.add(imgpath);
 						img = PageKit.getimgBase64Tip() + img;
 						javsrc.setImgsrc(img);
 						isTo64img = true;
 					}
+				}else if(StringUtils.isBlank(javsrc.getImgsrc()) || javsrc.getImgsrc().startsWith(PageKit.getimgBase64Tip())){
+					isTo64img = true;
 				}
 				//转换种子
 				String torpath = null;
@@ -1624,6 +1628,7 @@ public class PageKit {
 							torpath = PageKit.formatLocalpath(torpath);
 							String torstr = SecurityEncodeKit.GetImageStr(torpath);
 							if (StringUtils.isNotBlank(torstr)) {
+								filesPath.add(torpath);
 								javtor javtor = new javtor(javsrc.getId(),torstr);
 								PgsqlKit.save(ClassKit.javtorTableName,javtor);
 								newlisttor.add(PageKit.gettorBase64Key()+javtor.getId());
@@ -1631,22 +1636,23 @@ public class PageKit {
 							}
 						}
 						javsrc.setBtfile(JsonKit.bean2JSON(newlisttor));
+					}else if(StringUtils.isBlank(javsrc.getBtfile())){
+						isTo64tor = true;
+					}else if(listtor!=null && listtor.isEmpty()){
+						isTo64tor = true;
+					}else if(javsrc.getBtfile().contains("http://") || javsrc.getBtfile().contains("magnet:?xt=")){
+						isTo64tor = true;
 					}
 				}
 				if(!isTo64img && !isTo64tor){
 					logger.error(javsrc.getId()+"转换失败,等待下一次转换。");
 				}else{
-//					if(isTo64img && isTo64tor){
-//						javsrc.setIsstar("2");
-//					}
-					javsrc.setIsstar("2");
+					if(isTo64img && isTo64tor){
+						javsrc.setIsstar("2");
+						new FileOperateKit().delFileList(filesPath);
+					}
 					Map pp=JsonKit.json2Map(JsonKit.bean2JSON(javsrc));
 					PgsqlKit.updateById(ClassKit.javTableName, pp);
-					if(isTo64img){
-						new FileOperateKit().delNotEmptyFolder(imgpath);
-					}else{
-						new FileOperateKit().delNotEmptyFolder(torpath);
-					}
 				}
 			}
 
