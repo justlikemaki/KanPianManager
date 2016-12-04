@@ -2,6 +2,7 @@ package com.meteor.kit;
 
 
 import com.meteor.model.po.errpage;
+import com.meteor.model.po.javimg;
 import com.meteor.model.po.javsrc;
 import com.meteor.model.po.javtor;
 
@@ -12,5 +13,7 @@ public class ClassKit {
 		public static final String errTableName="errpage";
 		public static final Class javtorClass=javtor.class;
 		public static final String javtorTableName="javtor";
+		public static final Class javimgClass=javimg.class;
+		public static final String javimgTableName="javimg";
 		public static final Class javClientClass=com.meteor.model.vo.javsrc.class;
 }

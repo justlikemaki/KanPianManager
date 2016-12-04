@@ -187,8 +187,8 @@ public class javsrc {
 	private void initImgsrccg(){
         String rootdir= PropKit.get("rootdir");
         this.imgsrccg=this.imgsrc;
-        if(StringUtils.isNotBlank(this.imgsrc) && this.imgsrccg.contains(PageKit.getimgBase64Tip())){
-            this.imgsrccg=rootdir+"/interface/imgbase/"+id;
+        if(StringUtils.isNotBlank(this.imgsrc) && this.imgsrccg.contains(PageKit.getimgBase64Key())){
+            this.imgsrccg=rootdir+"/interface/imgbase/"+this.imgsrc;
             this.imgsrc=null;
         }
     }

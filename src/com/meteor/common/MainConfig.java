@@ -69,6 +69,16 @@ public class MainConfig extends JFinalConfig {
 		//配置定时任务插件
 		QuartzPlugin quartzPlugin =  new QuartzPlugin("job.properties");
 		me.add(quartzPlugin);
+		
+//		// 配置DruidPlugin数据库连接池插件
+//		DruidPlugin  druidPlugin1 = new DruidPlugin(PropKit.get("jdbcUrl1"), PropKit.get("user1"), PropKit.get("password1").trim(),PropKit.get("jdbcdriver1"));
+//		me.add(druidPlugin1);
+//		
+//		// 配置ActiveRecord插件
+//		ActiveRecordPlugin arppgsql1 = new ActiveRecordPlugin("pgsqlbk",druidPlugin1);
+//		me.add(arppgsql1);
+//		//arppgsql.setShowSql(true);
+//		arppgsql1.setDialect(new PostgreSqlDialect());
 	}
 	
 	/**

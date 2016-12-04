@@ -5,7 +5,6 @@ package com.meteor.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -13,7 +12,6 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +25,7 @@ import com.meteor.kit.JsonKit;
 import com.meteor.kit.PageKit;
 import com.meteor.kit.PgsqlKit;
 import com.meteor.kit.SecurityEncodeKit;
+import com.meteor.model.po.javimg;
 import com.meteor.model.po.javsrc;
 import com.meteor.model.po.javtor;
 import com.meteor.model.vo.SearchQueryP;
@@ -189,9 +188,9 @@ public class HttpInterfaceAction extends Controller {
 		OutputStream out = null;
 		try {
 			String oneid=getPara();
-			javsrc js = (javsrc) PgsqlKit.findById(ClassKit.javClass, oneid);
-			String img=js.getImgsrc();
-			img=img.replace(PageKit.getimgBase64Tip(),"");
+			oneid=oneid.replace(PageKit.getimgBase64Key(), "");
+			javimg js = (javimg) PgsqlKit.findById(ClassKit.javimgClass, oneid);
+			String img=js.getImgbase();
 			byte[] imgbytes=SecurityEncodeKit.GenerateImage(img);
 			if(imgbytes!=null) {
 				HttpServletResponse response=getResponse();

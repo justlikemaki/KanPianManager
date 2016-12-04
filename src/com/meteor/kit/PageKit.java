@@ -48,7 +48,8 @@ public class PageKit {
 	private final static Logger logger = LoggerFactory.getLogger(PageKit.class);
 	private static String imgBase64Tip="data:image/jpg;base64,";
 	private static String imgReplcKey="netcdn.space";
-	private static String torBase64Key="tor64--";
+	private static String torBase64Key="torBase&0&";
+	private static String imgBase64Key="imgBase&0&";
 	private static Map<String,String> tabtype=new HashMap<String, String>();
 	static {
 		tabtype.put("0","newspage");
@@ -68,6 +69,10 @@ public class PageKit {
 	
 	public static String gettorBase64Key(){
 		return torBase64Key;
+	}
+	
+	public static String getimgBase64Key(){
+		return imgBase64Key;
 	}
 
 	public static boolean hasTabType(String value){

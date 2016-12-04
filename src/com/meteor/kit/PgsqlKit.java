@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.meteor.model.po.javimg;
 import com.meteor.model.vo.SearchQueryP;
 
 /**
@@ -76,6 +78,49 @@ public class PgsqlKit {
             return "";
         }
     }
+    
+//    public static void savebk(String collectionName,Object obj) throws Exception{
+//        Record rec=new Record();
+//        Map p= JsonKit.json2Bean(JsonKit.bean2JSON(obj),HashMap.class);
+//        rec.setColumns(p);
+//        Db.use("pgsqlbk").save(collectionName,rec);
+//    }
+//    
+//    public static void saveImg(Record rd){
+//    	String img = rd.get("imgsrc");
+//    	String oneid = rd.get("id");
+//    	if(img != null && img.startsWith(PageKit.getimgBase64Tip())){		
+//    		try {
+//    			img = img.replace(PageKit.getimgBase64Tip(), "");
+//    			javimg ji=new javimg(oneid,img);
+//				PgsqlKit.savebk(ClassKit.javimgTableName,ji);
+//				rd.set("imgsrc",PageKit.getimgBase64Key()+ji.getId());
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//    	}
+//    	return;
+//    }
+//    
+//    public static void tobk(int nowpage,int count,StringBuffer sb){
+//    	int offset=(nowpage-1)*count;
+//    	String sql = "select * from javsrc limit "+count+" offset "+offset;
+//    	try {
+//    		List<Record> list = Db.use("pgsql").find(sql);
+//    		for (Record rd : list) {
+//    			String newid =rd.get("id")+RandomStringUtils.randomNumeric(6);
+//    			rd.set("id",newid);
+//    			saveImg(rd);
+//    			Db.use("pgsqlbk").save("javsrc", rd);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.out.println(sql);
+//			sb.append(e.getMessage()).append("\r\n");
+//			sb.append(sql).append("\r\n");
+//		}
+//    }
 
     public static List findall(Class<?> clazz,Map p) throws Exception {
         String objName=getClazzName(clazz);

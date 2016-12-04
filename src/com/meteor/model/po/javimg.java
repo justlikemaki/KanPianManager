@@ -4,27 +4,27 @@ import org.apache.commons.lang.RandomStringUtils;
 
 import com.meteor.kit.StringKit;
 
-public class javtor {
+public class javimg {
 
     private String id;
     private String srcid;
-    private String torbase;
+    private String imgbase;
 
-    public javtor(String srcid,String torbase){
+    public javimg(String srcid,String imgbase){
         this.id= StringKit.getMongoId()+RandomStringUtils.randomNumeric(3);
         this.srcid = srcid;
-        this.torbase = torbase;
+        this.imgbase = imgbase;
     }
     
-    public javtor(){
+    public javimg(){
     }
 
-	public String getTorbase() {
-		return torbase;
+	public String getImgbase() {
+		return imgbase;
 	}
 
-	public void setTorbase(String torbase) {
-		this.torbase = torbase;
+	public void setImgbase(String imgbase) {
+		this.imgbase = imgbase;
 	}
 
 	public String getId() {

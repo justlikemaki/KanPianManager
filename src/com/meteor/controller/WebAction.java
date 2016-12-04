@@ -3,12 +3,15 @@
  */
 package com.meteor.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +22,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
 import com.meteor.interceptor.LoginCheck;
 import com.meteor.kit.PageKit;
+import com.meteor.kit.PgsqlKit;
 
 /**
  * @author justlikemaki
@@ -31,6 +35,22 @@ public class WebAction extends Controller {
 
 	@Clear
 	public void tologin(){
+//		StringBuffer sb =new StringBuffer();
+//		for (int i = 0; i < 5620; i++) {
+//			PgsqlKit.tobk(i+1, 30,sb);
+//			try {
+//				Thread.sleep(200);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		try {
+//			FileUtils.writeStringToFile(new File("D:\\Development\\Servers\\Tomcats\\sql.txt"), sb.toString());
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		render("login.jsp");
 	}
 	
