@@ -35,6 +35,7 @@ import com.meteor.kit.getpage.PageManager;
 import com.meteor.kit.getpage.PageRun;
 import com.meteor.kit.http.HttpClientHelp;
 import com.meteor.kit.http.HttpUtilKit;
+import com.meteor.model.po.javimg;
 import com.meteor.model.po.javsrc;
 import com.meteor.model.po.javtor;
 import com.meteor.model.vo.BtList;
@@ -963,7 +964,7 @@ public class PageKit {
 
 			bean.setTabtype(typename);
 			bean.setIsdown("0");
-			bean.setId(StringKit.getMongoId());
+			bean.setId(bean.getMainId());
 			PgsqlKit.save(ClassKit.javTableName, bean);
 		}
 		return 0;
@@ -1040,7 +1041,7 @@ public class PageKit {
 
 			bean.setTabtype(typename);
 			bean.setIsdown("0");
-			bean.setId(StringKit.getMongoId());
+			bean.setId(bean.getMainId());
 			PgsqlKit.save(ClassKit.javTableName, bean);
 		}
 		return 0;
@@ -1186,7 +1187,7 @@ public class PageKit {
 						continue;
 					}
 					bean.setIsdown("0");
-					bean.setId(StringKit.getMongoId());
+					bean.setId(bean.getMainId());
 					PgsqlKit.save(ClassKit.javTableName, bean);
 				}
 			}
@@ -1364,6 +1365,9 @@ public class PageKit {
 			logger.error("503图片转换成功：" + img);
 			img = newimg;
 			one.setIsstar("1");
+			javimg ji=new javimg(one.getId(),img);
+			PgsqlKit.save(ClassKit.javimgTableName,ji);
+			img = PageKit.getimgBase64Key()+ji.getId();
 		}
 		one.setImgsrc(img);
 		Map pp = JsonKit.json2Map(JsonKit.bean2JSON(one));
@@ -1425,6 +1429,9 @@ public class PageKit {
 			if(StringUtils.isNotBlank(newimg)){
 				img=newimg;
 				one.setIsstar("1");
+				javimg ji=new javimg(one.getId(),img);
+				PgsqlKit.save(ClassKit.javimgTableName,ji);
+				img = PageKit.getimgBase64Key()+ji.getId();
 			}
 			one.setImgsrc(img);
 			Map pp=JsonKit.json2Map(JsonKit.bean2JSON(one));
@@ -1586,7 +1593,7 @@ public class PageKit {
 		try {
 			String rootsavedir = PropKit.get("rootsavedir");
 			SearchQueryP p = new SearchQueryP();
-//			p.setCount(100);
+//			p.setCount(1);
 //			p.setNowpage(1);
 			Map mp = new HashMap();
 			mp.put("tabtype","classical");
@@ -1615,8 +1622,9 @@ public class PageKit {
 					String img = SecurityEncodeKit.GetImageStr(imgpath);
 					if (StringUtils.isNotBlank(img)) {
 						filesPath.add(imgpath);
-						img = PageKit.getimgBase64Tip() + img;
-						javsrc.setImgsrc(img);
+						javimg ji=new javimg(javsrc.getId(),img);
+						PgsqlKit.save(ClassKit.javimgTableName,ji);
+						javsrc.setImgsrc(PageKit.getimgBase64Key()+ji.getId());
 						isTo64img = true;
 					}
 				}else if(StringUtils.isBlank(javsrc.getImgsrc()) || javsrc.getImgsrc().startsWith(PageKit.getimgBase64Tip())){
@@ -1654,15 +1662,15 @@ public class PageKit {
 				}else{
 					if(isTo64img && isTo64tor){
 						javsrc.setIsstar("2");
-						new FileOperateKit().delFileList(filesPath);
+//						new FileOperateKit().delFileList(filesPath);
 					}
 					Map pp=JsonKit.json2Map(JsonKit.bean2JSON(javsrc));
 					PgsqlKit.updateById(ClassKit.javTableName, pp);
 				}
 			}
 
-			String rootpath = PageKit.getfilePath(request);
-			new FileOperateKit().loopDelEmptyFolder(rootpath);
+//			String rootpath = PageKit.getfilePath(request);
+//			new FileOperateKit().loopDelEmptyFolder(rootpath);
 			logger.error("转换成功");
 			return true;
 		} catch (Exception e) {

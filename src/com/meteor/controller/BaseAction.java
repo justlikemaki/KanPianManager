@@ -49,11 +49,11 @@ import com.meteor.kit.http.HttpClientHelp;
 import com.meteor.kit.http.MultitDownload;
 import com.meteor.kit.http.TaskThreadManagers;
 import com.meteor.model.po.errpage;
+import com.meteor.model.po.javimg;
 import com.meteor.model.po.javsrc;
 import com.meteor.model.po.javtor;
 import com.meteor.model.vo.InExl;
 import com.meteor.model.vo.SearchQueryP;
-import com.mongodb.BasicDBList;
 
 @Before(LoginCheck.class)
 public class BaseAction extends Controller {
@@ -275,7 +275,7 @@ public class BaseAction extends Controller {
 			javsrc src = getModel(javsrc.class);
 			src.setTimes(DateKit.getStringDate());
 			src.setTabtype("classical");
-			src.setId(StringKit.getMongoId());
+			src.setId(src.getMainId());
 
 			List<String> torpath = new ArrayList();
 			List<String> torname = new ArrayList();
@@ -383,7 +383,7 @@ public class BaseAction extends Controller {
 				InExl ine=inelist.get(i);
 				javsrc js=new javsrc();
 				js.setIsstar("1");
-				js.setId(StringKit.getMongoId());
+				js.setId(js.getMainId());
 				js.setTimes(DateKit.getStringDate());
 				js.setTitle(ine.getParentDirMc());
 				js.setSbm(PageKit.getSbmByTitle(ine.getParentDirMc()));
@@ -639,7 +639,14 @@ public class BaseAction extends Controller {
 		try {
 			javsrc js=(javsrc)PgsqlKit.findById(ClassKit.javClass,oneid);
 			String img=js.getImgsrc();
-			if (img.contains("data:image/")) {
+			if (img.startsWith(PageKit.getimgBase64Key())) {
+				String imgid=img.split(PageKit.getimgBase64Key())[1];
+				javimg jm = (javimg) PgsqlKit.findById(ClassKit.javimgClass, imgid);
+				String baseimg = jm.getImgbase();
+				String filename = imgid + ".torrent";
+				String filedest = filepath + filename;
+				SecurityEncodeKit.GenerateImage(baseimg, filedest);
+			}else if (img.contains("data:image/")) {
 				img = img.replace(PageKit.getimgBase64Tip(), "");
 				String filename = oneid + ".jpg";
 				String filedest = filepath + filename;

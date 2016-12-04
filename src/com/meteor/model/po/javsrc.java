@@ -2,8 +2,11 @@ package com.meteor.model.po;
 
 import java.util.List;
 
+import org.apache.commons.lang.RandomStringUtils;
+
 import com.meteor.kit.JsonKit;
 import com.meteor.kit.PageKit;
+import com.meteor.kit.StringKit;
 
 public class javsrc  {
 
@@ -19,6 +22,10 @@ public class javsrc  {
     private String sbm,sbmsb;
     private List<String> tagslist, btfilelist, btnamelist;
 
+    public String getMainId(){
+    	return StringKit.getMongoId()+RandomStringUtils.randomNumeric(6);
+    }
+    
     public String getSbmsb() {
         sbmsb= PageKit.getSbmByTitle(title);
         return sbmsb;
