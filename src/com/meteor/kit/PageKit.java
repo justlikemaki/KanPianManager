@@ -1105,6 +1105,8 @@ public class PageKit {
 			if (StringUtils.isNotBlank(newimg)) {
 				img = newimg;
 				bean.setIsstar("1");
+				convertImgTable(bean, img);
+				img = bean.getImgsrc();
 			}
 		}
 		bean.setImgsrc(img);
@@ -1250,6 +1252,8 @@ public class PageKit {
 					if (StringUtils.isNotBlank(newimg)) {
 						img = newimg;
 						bean.setIsstar("1");
+						convertImgTable(bean, img);
+						img = bean.getImgsrc();
 					}
 					bean.setImgsrc(img);
 				}
@@ -1365,9 +1369,8 @@ public class PageKit {
 			logger.error("503图片转换成功：" + img);
 			img = newimg;
 			one.setIsstar("1");
-			javimg ji=new javimg(one.getId(),img);
-			PgsqlKit.save(ClassKit.javimgTableName,ji);
-			img = PageKit.getimgBase64Key()+ji.getId();
+			convertImgTable(one, img);
+			img = one.getImgsrc();
 		}
 		one.setImgsrc(img);
 		Map pp = JsonKit.json2Map(JsonKit.bean2JSON(one));
@@ -1427,11 +1430,10 @@ public class PageKit {
 			String img = one.getImgsrc();
 			String newimg=getBase64Img(img);
 			if(StringUtils.isNotBlank(newimg)){
-				img=newimg;
+				img = newimg;
 				one.setIsstar("1");
-				javimg ji=new javimg(one.getId(),img);
-				PgsqlKit.save(ClassKit.javimgTableName,ji);
-				img = PageKit.getimgBase64Key()+ji.getId();
+				convertImgTable(one, img);
+				img = one.getImgsrc();
 			}
 			one.setImgsrc(img);
 			Map pp=JsonKit.json2Map(JsonKit.bean2JSON(one));
@@ -1622,9 +1624,7 @@ public class PageKit {
 					String img = SecurityEncodeKit.GetImageStr(imgpath);
 					if (StringUtils.isNotBlank(img)) {
 						filesPath.add(imgpath);
-						javimg ji=new javimg(javsrc.getId(),img);
-						PgsqlKit.save(ClassKit.javimgTableName,ji);
-						javsrc.setImgsrc(PageKit.getimgBase64Key()+ji.getId());
+						convertImgTable(javsrc, img);
 						isTo64img = true;
 					}
 				}else if(StringUtils.isBlank(javsrc.getImgsrc()) || javsrc.getImgsrc().startsWith(PageKit.getimgBase64Tip())){
@@ -1676,6 +1676,16 @@ public class PageKit {
 		} catch (Exception e) {
 			logger.error("转换资源出错",e);
 			return false;
+		}
+	}
+	
+	private static void convertImgTable(javsrc j,String baseimg){
+		try {
+			javimg ji=new javimg(j.getId(),baseimg);
+			PgsqlKit.save(ClassKit.javimgTableName,ji);
+			j.setImgsrc(PageKit.getimgBase64Key()+ji.getId());
+		} catch (Exception e) {
+			logger.error("srcid:"+j.getId()+";err:"+e.getMessage());
 		}
 	}
 }

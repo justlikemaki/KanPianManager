@@ -66,8 +66,8 @@ public class BaseAction extends Controller {
 	 * @category 删除本地数据库的数据
 	 */
 	public void delData() throws Exception {
-		PgsqlKit.deleteCollectionAllData("companys");
-		PgsqlKit.deleteCollectionAllData("javsrc");
+//		PgsqlKit.deleteCollectionAllData("companys");
+//		PgsqlKit.deleteCollectionAllData("javsrc");
 		renderText("ok");
 	}
 	
@@ -643,7 +643,7 @@ public class BaseAction extends Controller {
 				String imgid=img.split(PageKit.getimgBase64Key())[1];
 				javimg jm = (javimg) PgsqlKit.findById(ClassKit.javimgClass, imgid);
 				String baseimg = jm.getImgbase();
-				String filename = imgid + ".torrent";
+				String filename = oneid + ".jpg";
 				String filedest = filepath + filename;
 				SecurityEncodeKit.GenerateImage(baseimg, filedest);
 			}else if (img.contains("data:image/")) {
