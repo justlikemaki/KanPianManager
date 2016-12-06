@@ -105,7 +105,7 @@ public class PgsqlKit {
 //    
 //    public static void tobk(int nowpage,int count,StringBuffer sb){
 //    	int offset=(nowpage-1)*count;
-//    	String sql = "select * from javsrc limit "+count+" offset "+offset;
+//    	String sql = "select * from javsrc order by id asc limit "+count+" offset "+offset;
 //    	try {
 //    		List<Record> list = Db.use("pgsql").find(sql);
 //    		for (Record rd : list) {

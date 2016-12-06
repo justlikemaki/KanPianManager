@@ -5,6 +5,12 @@ jdbcUrl = jdbc:postgresql://localhost:5432/kanpian
 user = postgres
 password = 65604225
 
+#jdbcdriver1 = org.postgresql.Driver
+#jdbcUrl1 = jdbc:postgresql://localhost:5432/kanpianbk
+#user1 = postgres
+#password1 = 65604225
+
+
 #管理后台参数begin
 #基本参数
 dataintoday=1

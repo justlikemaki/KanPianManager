@@ -1681,6 +1681,7 @@ public class PageKit {
 	
 	private static void convertImgTable(javsrc j,String baseimg){
 		try {
+			baseimg = baseimg.replace(PageKit.getimgBase64Tip(), "");
 			javimg ji=new javimg(j.getId(),baseimg);
 			PgsqlKit.save(ClassKit.javimgTableName,ji);
 			j.setImgsrc(PageKit.getimgBase64Key()+ji.getId());
