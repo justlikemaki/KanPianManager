@@ -243,14 +243,14 @@ public class HttpInterfaceAction extends Controller {
 				renderNull();			
 				return;
 			}else{
-				logger.error("torbase: " +"不是base64编码的种子");
+				logger.warn("torbase: " +"不是base64编码的种子");
 			}
 		} catch (Exception e) {
 			if(e.toString().contains("Connection reset by peer")){
 				renderNull();			
 				return;
 			}else{
-				logger.error("torbase: " + e.toString());
+				logger.warn("torbase: " + e.toString());
 			}
 		} finally {
 			if(out!=null) {

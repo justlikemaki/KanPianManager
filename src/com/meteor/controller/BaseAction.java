@@ -840,7 +840,7 @@ public class BaseAction extends Controller {
 				String hostrep=host.replace(oldhost,newhost);
 				if(StringUtils.isNotBlank(host)){
 					cof=cof.replace(host,hostrep);
-					logger.error("替换" + type + "的url完成，新url为：" +hostrep);
+					logger.info("替换" + type + "的url完成，新url为：" +hostrep);
 					return cof;
 				}else{
 					return  cof;

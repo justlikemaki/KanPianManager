@@ -38,7 +38,7 @@ public class PageRun {
             String[] pageArray = nums.split("p2p");
             doitImg(threadnum, pageArray, type, fhkey);
         }else {
-            logger.error("正在获取" + type + "的资源,page:" + nums + "---" + fhkey);
+            logger.info("正在获取" + type + "的资源,page:" + nums + "---" + fhkey);
             pm.setBgtime(new Date().getTime());
             List parentArray = filterNums(threadnum, nums);
             int threadnumint = (int) threadnum;
@@ -58,7 +58,7 @@ public class PageRun {
             int threadnumint = 1;
             CyclicBarrier barrier = new CyclicBarrier(threadnumint, new MainGetPage(pm, type));
             ExecutorService exec = Executors.newFixedThreadPool(threadnumint);
-            logger.error("正在获取" + type + "的资源,img:" + js + "---" + fhkey);
+            logger.info("正在获取" + type + "的资源,img:" + js + "---" + fhkey);
             List<String> listimg = new ArrayList<String>();
             listimg.add((String)js);
             exec.submit(new SubGetPage(pm, barrier, listimg, type, fhkey));
@@ -69,7 +69,7 @@ public class PageRun {
             ExecutorService exec = Executors.newFixedThreadPool(threadnumint);
             List<String> listimg = new ArrayList<String>();
             for (String img:(String[])js) {
-                logger.error("正在获取" + type + "的资源,img:" + img + "---" + fhkey);
+                logger.info("正在获取" + type + "的资源,img:" + img + "---" + fhkey);
                 listimg.add(img);
             }
             exec.submit(new SubGetPage(pm, barrier, listimg, type, fhkey));
@@ -82,7 +82,7 @@ public class PageRun {
             ExecutorService exec = Executors.newFixedThreadPool(threadnumint);
             for (int i = 0; i < threadnumint; i++) {
                 List<String> numlist = (List<String>) parentArray.get(i);
-                logger.error("正在获取" + type + "的资源,img:" + JsonKit.bean2JSON(numlist) + "---" + fhkey);
+                logger.info("正在获取" + type + "的资源,img:" + JsonKit.bean2JSON(numlist) + "---" + fhkey);
                 exec.submit(new SubGetPage(pm, barrier, numlist, type, fhkey));
             }
             exec.shutdown();
@@ -295,11 +295,11 @@ class MainGetPage implements Runnable {
         String hs= DateKit.getTimeOff(edtime);
         String errnums=pm.getErrnums();
         if(StringUtils.isNotBlank(errnums)){
-            logger.error(type+" 失败页数:" + errnums);
+            logger.warn(type+" 失败页数:" + errnums);
             pm.setSb("<br>" +type+" 失败页数:" + errnums);
         }
         pm.setSb("<br>"+type +" All Right,"+"耗时："+hs);
-        logger.error(type+" 全部执行完毕,"+"耗时："+hs);
+        logger.warn(type+" 全部执行完毕,"+"耗时："+hs);
         PageKit.delrepeated();
     }
 }

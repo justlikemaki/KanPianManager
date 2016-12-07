@@ -42,7 +42,7 @@ public class GetResourceTask  implements Job{
 			if(type.equals("westpron")) {
 				loopnum=15;
 			}
-			logger.error("正在获取"+type+"的资源,page:1--"+loopnum);
+			logger.info("正在获取"+type+"的资源,page:1--"+loopnum);
 			for(int i=1;i<=loopnum;i++){
 				try{
 					String newi = String.valueOf(i);
@@ -83,11 +83,11 @@ public class GetResourceTask  implements Job{
 			}
 
 			if(errPages.size()>0){
-				logger.error(type+" 失败页数:" + JsonKit.bean2JSON(errPages));
+				logger.warn(type+" 失败页数:" + JsonKit.bean2JSON(errPages));
 			}
 			long edtime=new Date().getTime()-starttime;
 			String hs= DateKit.getTimeOff(edtime);
-			logger.error(type+" 全部执行完毕,"+"耗时："+hs);
+			logger.info(type+" 全部执行完毕,"+"耗时："+hs);
 		} catch (Exception e) {
 			logger.error("更新"+type+"失败:"+e.toString());
 		}		

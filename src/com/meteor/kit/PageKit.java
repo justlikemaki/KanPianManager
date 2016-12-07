@@ -155,13 +155,13 @@ public class PageKit {
 			String overtime = DateKit.getStringDate();
 			sql="SELECT * from (select replace(replace(replace(regexp_split_to_table(tags,','),'\"',''),']',''),'[','') tags,count(1) from javsrc where times <= '"+overtime+"'" +
 					"GROUP BY replace(replace(replace(regexp_split_to_table(tags,','),'\"',''),']',''),'[','') ORDER BY count(1) desc) t1 "+
-					"where t1.tags not LIKE '%WESTPORN%' and t1.tags not LIKE '%CENSORED%' and t1.tags not LIKE '%CLASSICAL%' and t1.tags not LIKE '%单片%' and  t1.tags not LIKE '%高画质%' " +
-					"LIMIT 90 OFFSET 10";
+					"where t1.tags not LIKE '%WESTPORN%' and t1.tags not LIKE '%CENSORED%' and t1.tags not LIKE '%CLASSICAL%' and t1.tags not LIKE '%单片%' and  t1.tags not LIKE '%高画质%' and  t1.tags not LIKE '%W_%' " +
+					"LIMIT 90 OFFSET 6";
 		}else {
 			sql="SELECT * from (select replace(replace(replace(regexp_split_to_table(tags,','),'\"',''),']',''),'[','') tags,count(1) from javsrc " +
 					"GROUP BY replace(replace(replace(regexp_split_to_table(tags,','),'\"',''),']',''),'[','') ORDER BY count(1) desc) t1 "+
-					"where t1.tags not LIKE '%WESTPORN%' and t1.tags not LIKE '%CENSORED%' and t1.tags not LIKE '%CLASSICAL%' and t1.tags not LIKE '%单片%' and  t1.tags not LIKE '%高画质%' " +
-					"LIMIT 90 OFFSET 10";
+					"where t1.tags not LIKE '%WESTPORN%' and t1.tags not LIKE '%CENSORED%' and t1.tags not LIKE '%CLASSICAL%' and t1.tags not LIKE '%单片%' and  t1.tags not LIKE '%高画质%' and  t1.tags not LIKE '%W_%' " +
+					"LIMIT 90 OFFSET 6";
 		}
 		List<Record> list= Db.find(sql);
 		List<Map.Entry> mappingList = new ArrayList<Map.Entry>();
@@ -190,8 +190,8 @@ public class PageKit {
 	private static List<Map.Entry> getHotlist() throws Exception {
 		String sql="SELECT * from (select replace(replace(replace(regexp_split_to_table(tags,','),'\"',''),']',''),'[','') tags,count(1) from javsrc " +
 				"GROUP BY replace(replace(replace(regexp_split_to_table(tags,','),'\"',''),']',''),'[','') ORDER BY count(1) desc) t1 "+
-				"where t1.tags not LIKE '%WESTPORN%' and t1.tags not LIKE '%CENSORED%' and t1.tags not LIKE '%CLASSICAL%' and t1.tags not LIKE '%单片%' and  t1.tags not LIKE '%高画质%' " +
-				"LIMIT 90 OFFSET 10";
+				"where t1.tags not LIKE '%WESTPORN%' and t1.tags not LIKE '%CENSORED%' and t1.tags not LIKE '%CLASSICAL%' and t1.tags not LIKE '%单片%' and  t1.tags not LIKE '%高画质%' and  t1.tags not LIKE '%W_%' " +
+				"LIMIT 90 OFFSET 6";
 		List<Record> list= Db.find(sql);
 		List<Map.Entry> mappingList = new ArrayList<Map.Entry>();
 		for (int i=0 ; i < list.size() ; i++){
@@ -724,7 +724,7 @@ public class PageKit {
 				btlist.add(errlistOne());
 			}
 		}catch (Exception e) {
-			logger.error("getBtKitty: " + e.toString());
+			logger.info("getBtKitty: " + e.toString());
 			btlist=new ArrayList();
 			btlist.add(errlistOne(e.toString()));
 		}
@@ -1366,7 +1366,7 @@ public class PageKit {
 	public static void getAndUpdate503(javsrc one,String img) throws Exception {
 		String newimg = get503Base64Img(img);
 		if (StringUtils.isNotBlank(newimg)) {
-			logger.error("503图片转换成功：" + img);
+			logger.info("503图片转换成功：" + img);
 			img = newimg;
 			one.setIsstar("1");
 			convertImgTable(one, img);
@@ -1413,7 +1413,7 @@ public class PageKit {
 	public static void tobase64() throws Exception {
 		tobase64Https("censored");
 		tobase64Https("uncensored");
-		logger.error("转换图片为Base64成功");
+		logger.info("转换图片为Base64成功");
 	}
 
 	private static void tobase64Https(String tabtype) throws Exception {
@@ -1459,14 +1459,14 @@ public class PageKit {
 		String sql="delete from javsrc j1 where j1.id in (select a.id from javsrc a where a.title in  (select title from javsrc group by title having count(*) > 1)) " +
 				"and j1.id not in (select max(id) from javsrc group by title having count(*) > 1)";
 		PgsqlKit.excuteSql(sql);
-		logger.error("清除javsrc重复项完毕");
+		logger.info("清除javsrc重复项完毕");
 	}
 
 	public static void delrepeatedErrpage(){
 		String sql="delete from errpage where id not in " +
 				"(select max(id) from errpage GROUP BY TYPE,num,searchkey)";
 		PgsqlKit.excuteSql(sql);
-		logger.error("清除errpage重复项完毕");
+		logger.info("清除errpage重复项完毕");
 	}
 
 	public static void setpc(HttpServletRequest request){
@@ -1603,7 +1603,7 @@ public class PageKit {
 			p.setParameters(mp);
 			Map res = PgsqlKit.findByCondition(ClassKit.javClass, p);
 			List<javsrc> srcs = (List<javsrc>) res.get("list");
-			logger.error("待转换数据数量："+res.get("select"));
+			logger.info("待转换数据数量："+res.get("select"));
 			String localpath = PageKit.getfilePath(request).replace(rootsavedir, "");
 			for (Iterator iterator = srcs.iterator(); iterator.hasNext();) {
 				javsrc javsrc = (javsrc) iterator.next();		
@@ -1658,7 +1658,7 @@ public class PageKit {
 					}
 				}
 				if(!isTo64img && !isTo64tor){
-					logger.error(javsrc.getId()+"转换失败,等待下一次转换。");
+					logger.warn(javsrc.getId()+"转换失败,等待下一次转换。");
 				}else{
 					if(isTo64img && isTo64tor){
 						javsrc.setIsstar("2");
@@ -1671,7 +1671,7 @@ public class PageKit {
 
 //			String rootpath = PageKit.getfilePath(request);
 //			new FileOperateKit().loopDelEmptyFolder(rootpath);
-			logger.error("转换成功");
+			logger.info("转换成功");
 			return true;
 		} catch (Exception e) {
 			logger.error("转换资源出错",e);

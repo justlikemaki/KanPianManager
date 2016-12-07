@@ -143,7 +143,7 @@ public class HttpUtilKit {
 			webClient.getOptions().setJavaScriptEnabled(false);
 			htmlPage = webClient.getPage(url);
 			if (htmlPage.getWebResponse().getStatusCode() == 503) {
-				logger.error("503递归：" + url);
+				logger.warn("503递归：" + url);
 				webClient.close();
 				webClient = null;
 				count += 1;

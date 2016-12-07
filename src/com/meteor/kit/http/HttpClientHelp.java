@@ -536,7 +536,7 @@ public class HttpClientHelp {
 			int length = Integer.valueOf(hd.getValue());
 			int filelength = FileUtils.readFileToByteArray(f).length;
 			if (length != filelength) {
-				logger.error("资源下载不完整，需重新下载");
+				logger.warn("资源下载不完整，需重新下载");
 				return true;
 			}
 		}
