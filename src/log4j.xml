@@ -59,4 +59,7 @@
     <logger name="com.gargoylesoftware.htmlunit">
         <level value="off" />
     </logger>
+    <logger name="org.quartz">
+        <level value="off" />
+    </logger>
 </log4j:configuration>  
