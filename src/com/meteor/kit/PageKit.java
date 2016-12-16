@@ -1550,7 +1550,7 @@ public class PageKit {
 	public static String  downloadWithStatus(String url,String filedest,String errcode){
 		File f = new File(filedest);
 		if (!f.exists()) {
-			String res = HttpClientHelp.getFileDownByPathFull(url, filedest,false);
+			String res = HttpClientHelp.getFileDownByPathFull(url, filedest,true);
 			Map resp = JsonKit.json2Map(res);
 			Object errmsg=resp.get("errmsg");
 			if(errmsg!=null && errmsg.toString().contains("404")){
