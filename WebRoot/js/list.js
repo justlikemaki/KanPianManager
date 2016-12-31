@@ -58,7 +58,8 @@ function findthis(){
             $(findobj).css("line-height","16px");
             $(findobj).css("width","100px");
             $(findobj).css("text-align","left")
-            $(findobj).text(data);
+            $(findobj).text("");
+            $(findobj).append(data);
             $(findobj).off("click");
         }else{
             alert("定位失败");

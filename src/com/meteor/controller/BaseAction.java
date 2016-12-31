@@ -189,6 +189,7 @@ public class BaseAction extends Controller {
 			long yu=totalIndex%count+1;
 
 			String resp=type+"中第"+page+"页,第"+yu+"个元素";
+			resp="<a href='"+type+"/"+page+"'>"+resp+"</a>";
 			renderText(resp);
 		}catch (Exception e){
 			logger.error("findthis: "+e.toString());
