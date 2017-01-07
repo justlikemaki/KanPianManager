@@ -951,7 +951,8 @@ public class PageKit {
 			String date = dates.get(1).text().trim();
 			date=DateKit.KsrqString(date);
 			bean.setTimes(date);
-
+			bean.setId(bean.getMainId());
+			
 			/**得到子链接**/
 			Elements a = one.getElementsByTag("a");
 			String blink=a.get(0).attr("href");
@@ -964,7 +965,6 @@ public class PageKit {
 
 			bean.setTabtype(typename);
 			bean.setIsdown("0");
-			bean.setId(bean.getMainId());
 			PgsqlKit.save(ClassKit.javTableName, bean);
 		}
 		return 0;
@@ -1030,7 +1030,8 @@ public class PageKit {
 			String date = dates.get(1).text().trim();
 			date=DateKit.KsrqString(date);
 			bean.setTimes(date);
-
+			bean.setId(bean.getMainId());
+			
 			/**得到子链接**/
 			Elements a = one.getElementsByTag("a");
 			String blink=a.get(0).attr("href");
@@ -1041,7 +1042,6 @@ public class PageKit {
 
 			bean.setTabtype(typename);
 			bean.setIsdown("0");
-			bean.setId(bean.getMainId());
 			PgsqlKit.save(ClassKit.javTableName, bean);
 		}
 		return 0;
@@ -1178,6 +1178,8 @@ public class PageKit {
 						continue;
 					}
 					bean.setTitle(title);
+					bean.setId(bean.getMainId());
+					
 					/**得到影片类型**/
 					Elements img = one.select("img");
 					String movieType = img.get(0).attr("title");
@@ -1189,7 +1191,6 @@ public class PageKit {
 						continue;
 					}
 					bean.setIsdown("0");
-					bean.setId(bean.getMainId());
 					PgsqlKit.save(ClassKit.javTableName, bean);
 				}
 			}
