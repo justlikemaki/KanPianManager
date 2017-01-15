@@ -60,6 +60,7 @@ public class WebAppListen implements ServletContextListener{
 					sleep(1000 * 60 * minu);
 					//System.out.println("每隔" + minu + "分钟自动刷新缓存" + DateKit.getStringDate());
 					PageKit.updateCache(sct);
+					PageKit.updateProp();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

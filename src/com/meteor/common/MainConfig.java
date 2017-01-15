@@ -19,6 +19,7 @@ import com.jfinal.render.ViewType;
 import com.meteor.controller.BaseAction;
 import com.meteor.controller.HttpInterfaceAction;
 import com.meteor.controller.WebAction;
+import com.meteor.kit.PageKit;
 
 /**
  * API引导式配置
@@ -29,10 +30,7 @@ public class MainConfig extends JFinalConfig {
 	 * 配置常量
 	 */
 	public void configConstant(Constants me) {
-		PropKit.use("config.txt");
-		PropKit.use("accessuuid.txt");
-		PropKit.use("blockkey.txt");
-		PropKit.use("contenttype.properties");
+		PageKit.updateProp();
 		me.setDevMode(PropKit.getBoolean("devMode", false));
 		me.setViewType(ViewType.JSP);// 设置视图类型为Jsp，否则默认为FreeMarker
 
