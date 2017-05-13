@@ -487,7 +487,7 @@ public class PageKit {
 	 * @category 获取bt
 	 */
 	private static String getBtLinksAll(String sv, String id,javsrc jav,boolean flag) {
-		String types="t1--t2--t3";
+		String types=PropKit.get("selectallbt");;
 		String[] typearray=types.split("--");
 		String rejson=getBtLinksByType(sv,typearray,id,jav,flag);
 		return rejson;
@@ -504,7 +504,7 @@ public class PageKit {
 			for (int i=0;i<typearray.length;i++){
 				String type=typearray[i];
 				if(type.equals("t1")){
-					List one = getBtNyaa(sv, id,flag);
+					List one = getOnejav(sv, id,flag);
 					List bl1=filterSuccess(one);
 					btlist=ListUtils.union(btlist, bl1);
 				}
@@ -517,6 +517,11 @@ public class PageKit {
 					List three = getBtSow(sv,id,flag);
 					List bl3=filterSuccess(three);
 					btlist=ListUtils.union(btlist, bl3);
+				}
+				if(type.equals("t4")){
+					List one = getBtNyaa(sv, id,flag);
+					List bl1=filterSuccess(one);
+					btlist=ListUtils.union(btlist, bl1);
 				}
 			}
 
@@ -578,6 +583,80 @@ public class PageKit {
 			PgsqlKit.updateById(ClassKit.javTableName, p);
 		}
 	}
+	
+	public static List getOnejav(String sv,String id,boolean  likeflag){
+		List<BtList> btlist=new ArrayList();
+		try {
+			String bthost=PropKit.get("bthost1");
+			String url=bthost+"search/"+java.net.URLEncoder.encode(sv,"UTF-8");
+			Map headers = HttpClientHelp.getDefaultHeader();
+			String html=HttpClientHelp.doGet(url, null, headers, true);
+
+			Document doc = Jsoup.parse(html);
+			Elements news = doc.select(".card-group .card-block");
+//			if(news == null || news.isEmpty() || news.size()==0){
+//				SendEmail.sendWebChangeWarn(url);
+//			}
+			if(news.size()>0){
+				List<CompDate> elelist=new ArrayList();
+				for (int i = 1; i < news.size(); i++) {
+					Element one= (Element)news.get(i);
+					String date=one.child(1).child(0).text();
+					Element tlistname=one.child(0);
+					String btname=tlistname.getElementsByTag("a").text();
+					btname=btname.toLowerCase();
+					sv=sv.toLowerCase();
+					if( likeflag || (btname.contains(sv)||btname.replace("-","").contains(sv.replace("-","")))) {
+						CompDate cd=new CompDate();
+						cd.setIndex(i);
+						cd.setDate(date);
+						cd.setEle(one);
+						elelist.add(cd);
+					}
+				}
+				Collections.sort(elelist);
+
+				if(StringUtils.isNotBlank(id)) {
+					int ed = elelist.size() > 3 ? 3 : elelist.size();
+					for (int i = 0; i < ed; i++) {
+						BtList bl = getOnejavList(elelist.get(i).getEle(),bthost);
+						btlist.add(bl);
+					}
+				}else{
+					if(elelist.size()>=1) {
+						BtList bl0 = new BtList();
+						bl0.setBtlink("#");
+						bl0.setBtname("onejav");
+						btlist.add(bl0);
+					}else{
+						btlist.add(errlistOne());
+					}
+					for (int i = 0; i < elelist.size(); i++) {
+						BtList bl = getOnejavList(elelist.get(i).getEle(),bthost);
+						btlist.add(bl);
+					}
+				}
+			}else{
+				btlist.add(errlistOne());
+			}
+		}catch (Exception e) {
+			logger.error("getOnejav: " + e.toString());
+			btlist=new ArrayList();
+			btlist.add(errlistOne(e.toString()));
+		}
+		return btlist;
+	}
+	
+	private static BtList getOnejavList(Element one,String host) throws Exception{
+		BtList bl=new BtList();
+		Element tlistname=one.child(0);
+		String btname=tlistname.getElementsByTag("a").text();
+		bl.setBtname(btname+".torrent");
+		Element tlistlink=one.child(one.children().size()-1);
+		String btlink=host+tlistlink.attr("href");
+		bl.setBtlink(btlink);
+		return bl;		
+	}
 
 	/**
 	 * @author Meteor
@@ -594,9 +673,9 @@ public class PageKit {
 
 			Document doc = Jsoup.parse(html);
 			Elements news = doc.select(".data-list .row");
-			if(news == null || news.isEmpty() || news.size()==0){
-				SendEmail.sendWebChangeWarn(url);
-			}
+//			if(news == null || news.isEmpty() || news.size()==0){
+//				SendEmail.sendWebChangeWarn(url);
+//			}
 			if(news.size()>0){
 				List<CompDate> elelist=new ArrayList();
 				for (int i = 1; i < news.size(); i++) {
@@ -605,7 +684,7 @@ public class PageKit {
 					String btname=one.child(0).attr("title");
 					btname=btname.toLowerCase();
 					sv=sv.toLowerCase();
-					if( likeflag||(btname.contains(sv)||btname.replace("-","").contains(sv.replace("-","")))) {
+					if( likeflag || (btname.contains(sv)||btname.replace("-","").contains(sv.replace("-","")))) {
 						CompDate cd=new CompDate();
 						cd.setIndex(i);
 						cd.setDate(date);
@@ -618,7 +697,7 @@ public class PageKit {
 				if(StringUtils.isNotBlank(id)) {
 					int ed = elelist.size() > 3 ? 3 : elelist.size();
 					for (int i = 0; i < ed; i++) {
-						BtList bl = getbtlist3(elelist.get(i).getEle());
+						BtList bl = getBtSowList(elelist.get(i).getEle());
 						btlist.add(bl);
 					}
 				}else{
@@ -631,7 +710,7 @@ public class PageKit {
 						btlist.add(errlistOne());
 					}
 					for (int i = 0; i < elelist.size(); i++) {
-						BtList bl = getbtlist3(elelist.get(i).getEle());
+						BtList bl = getBtSowList(elelist.get(i).getEle());
 						btlist.add(bl);
 					}
 				}
@@ -646,7 +725,7 @@ public class PageKit {
 		return btlist;
 	}
 
-	private static BtList getbtlist3(Element one) throws Exception{
+	private static BtList getBtSowList(Element one) throws Exception{
 		String btname=one.child(0).attr("title");
 		String baseurl=one.child(0).attr("href");
 		Map headers = HttpClientHelp.getDefaultHeader();
@@ -675,9 +754,9 @@ public class PageKit {
 
 			Document doc = Jsoup.parse(html);
 			Elements news = doc.select("#archiveResult tr");
-			if(news == null || news.isEmpty() || news.size()==0){
-				SendEmail.sendWebChangeWarn(url);
-			}
+//			if(news == null || news.isEmpty() || news.size()==0){
+//				SendEmail.sendWebChangeWarn(url);
+//			}
 			if(news.size()>0){
 				if(StringUtils.isNotBlank(news.get(1).child(1).text())){
 					List<CompDate> elelist=new ArrayList();
@@ -687,7 +766,7 @@ public class PageKit {
 						String btname=one.child(0).text();
 						btname=btname.toLowerCase();
 						sv=sv.toLowerCase();
-						if( likeflag||(btname.contains(sv)||btname.replace("-","").contains(sv.replace("-","")))) {
+						if( likeflag || (btname.contains(sv)||btname.replace("-","").contains(sv.replace("-","")))) {
 							CompDate cd=new CompDate();
 							cd.setIndex(i);
 							cd.setDate(date);
@@ -700,7 +779,7 @@ public class PageKit {
 					if(StringUtils.isNotBlank(id)) {
 						int ed = elelist.size() > 3 ? 3 : elelist.size();
 						for (int i = 0; i < ed; i++) {
-							BtList bl = getbtlist2(elelist.get(i).getEle());
+							BtList bl = getBtKittyList(elelist.get(i).getEle());
 							btlist.add(bl);
 						}
 					}else{
@@ -713,7 +792,7 @@ public class PageKit {
 							btlist.add(errlistOne());
 						}
 						for (int i = 0; i < elelist.size(); i++) {
-							BtList bl = getbtlist2(elelist.get(i).getEle());
+							BtList bl = getBtKittyList(elelist.get(i).getEle());
 							btlist.add(bl);
 						}
 					}
@@ -731,7 +810,7 @@ public class PageKit {
 		return btlist;
 	}
 
-	private static BtList getbtlist2(Element one) throws Exception{
+	private static BtList getBtKittyList(Element one) throws Exception{
 		String btname=one.child(0).text();
 		String btlink=one.child(3).child(1).attr("href");
 		BtList bl=new BtList();
@@ -748,27 +827,27 @@ public class PageKit {
 	public static List getBtNyaa(String sv,String id,boolean  likeflag){
 		List<BtList> btlist=new ArrayList();
 		try {
-			String bthost=PropKit.get("bthost");
-			String url=bthost+"?page=search&cats=0_0&filter=0&term="+java.net.URLEncoder.encode(sv,"UTF-8");
+			String bthost=PropKit.get("bthost4");
+			String url=bthost+"?f=0&c=2_2&q="+java.net.URLEncoder.encode(sv,"UTF-8");
 			Map headers = HttpClientHelp.getDefaultHeader();
 			String html=HttpClientHelp.doGet(url, null, headers, true);
 
 			Document doc = Jsoup.parse(html);
-			Elements news = doc.select(".tlistrow");
-			if(news == null || news.isEmpty() || news.size()==0){
-				SendEmail.sendWebChangeWarn(url);
-			}
+			Elements news = doc.select("tr.default");
+//			if(news == null || news.isEmpty() || news.size()==0){
+//				SendEmail.sendWebChangeWarn(url);
+//			}
 			if(news.size()>0){
 				List<CompDls> elelist=new ArrayList();
 				for (int i = 0; i < news.size(); i++) {
 					Element one= (Element)news.get(i);
-					Elements dlse=one.getElementsByClass("tlistdn");
-					int dls=Integer.parseInt(dlse.get(0).html());
-					Elements tlistname=one.getElementsByClass("tlistname");
-					String btname=tlistname.get(0).getElementsByTag("a").text();
+					Element dlse=one.child(one.children().size()-1);
+					int dls=Integer.parseInt(dlse.text());
+					Element tlistname=one.child(1);
+					String btname=tlistname.getElementsByTag("a").text();
 					btname=btname.toLowerCase();
 					sv=sv.toLowerCase();
-					if( likeflag||(btname.contains(sv)||btname.replace("-","").contains(sv.replace("-","")))) {
+					if( likeflag || (btname.contains(sv)||btname.replace("-","").contains(sv.replace("-","")))) {
 						CompDls cd=new CompDls();
 						cd.setIndex(i);
 						cd.setDls(dls);
@@ -779,18 +858,10 @@ public class PageKit {
 				Collections.sort(elelist);
 
 				if(StringUtils.isNotBlank(id)){
-					if(elelist.size()>=3){
-						int bg=elelist.size()-1;
-						int ed=elelist.size()-3;
-						for (int i =bg ; i >=ed; i--) {
-							BtList bl=getbtlist(elelist.get(i).getEle());
-							btlist.add(bl);
-						}
-					}else{
-						for (int i =0 ; i<elelist.size(); i++) {
-							BtList bl=getbtlist(elelist.get(i).getEle());
-							btlist.add(bl);
-						}
+					int ed = elelist.size() > 3 ? 3 : elelist.size();
+					for (int i = 0; i < ed; i++) {
+						BtList bl = getBtNyaaList(elelist.get(i).getEle());
+						btlist.add(bl);
 					}
 				}else{
 					if(elelist.size()>=1) {
@@ -802,25 +873,13 @@ public class PageKit {
 						btlist.add(errlistOne());
 					}
 					for (int i =0 ; i<elelist.size(); i++) {
-						BtList bl=getbtlist(elelist.get(i).getEle());
+						BtList bl=getBtNyaaList(elelist.get(i).getEle());
 						btlist.add(bl);
 					}
 				}
 			}else{
-				Elements basenews = doc.select(".content");
-				Elements torlinks=basenews.get(0).getElementsByClass("viewdownloadbutton");
-				if(torlinks.size()>0){
-					String btlink=torlinks.get(0).getElementsByTag("a").attr("href");
-					String btname=basenews.get(0).getElementsByClass("viewtorrentname").get(0).text();
-					BtList bl=new BtList();
-					bl.setBtlink(btlink);
-					bl.setBtname(btname);
-					btlist.add(bl);
-				}else{
-					btlist.add(errlistOne());
-				}
+				btlist.add(errlistOne());
 			}
-
 		} catch (Exception e) {
 			logger.error("getBtNyaa: " + e.toString());
 			btlist=new ArrayList();
@@ -834,21 +893,14 @@ public class PageKit {
 	 * @Title
 	 * @category 获取bt列表
 	 */
-	private static BtList getbtlist(Element one) throws Exception{
-		String protocol="http:";
-		Elements tlistname=one.getElementsByClass("tlistname");
-		String baseurl=tlistname.get(0).getElementsByTag("a").attr("href");
-		baseurl=protocol+baseurl;
-		String btname=tlistname.get(0).getElementsByTag("a").text();
-		Map headers = HttpClientHelp.getDefaultHeader();
-		String basehtml=HttpClientHelp.doGet(baseurl, null, headers, true);
-		Document basedoc = Jsoup.parse(basehtml);
-		Elements basenews = basedoc.select(".viewdownloadbutton");
-		String btlink=basenews.get(0).getElementsByTag("a").attr("href");
-		btlink=protocol+btlink;
+	private static BtList getBtNyaaList(Element one) throws Exception{
 		BtList bl=new BtList();
-		bl.setBtlink(btlink);
+		Element tlistname=one.child(1);
+		String btname=tlistname.getElementsByTag("a").text();
 		bl.setBtname(btname+".torrent");
+		Element tlistlink=one.child(2);
+		String btlink=tlistlink.getElementsByTag("a").get(0).attr("href");
+		bl.setBtlink(btlink);
 		return bl;		
 	}
 
@@ -1551,7 +1603,15 @@ public class PageKit {
 	public static String  downloadWithStatus(String url,String filedest,String errcode){
 		File f = new File(filedest);
 		if (!f.exists()) {
-			String res = HttpClientHelp.getFileDownByPathFull(url, filedest,true);
+			String notproxydownload=PropKit.get("notproxydownload");
+			boolean isproxy = true;
+			String[] noproxys = notproxydownload.split(";");
+			for (String noproxy : noproxys) {
+				if(StringUtils.isNotBlank(noproxy) && url.contains(noproxy)){
+					isproxy = false;
+				}
+			}
+			String res = HttpClientHelp.getFileDownByPathFull(url, filedest,isproxy);
 			Map resp = JsonKit.json2Map(res);
 			Object errmsg=resp.get("errmsg");
 			if(errmsg!=null && errmsg.toString().contains("404")){

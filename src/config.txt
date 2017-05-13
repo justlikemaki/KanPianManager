@@ -1,4 +1,4 @@
-serverhost=http://localhost:81/kan/manager/
+serverhost=http://localhost:88/kan/manager/
 #默认数据库链接参数
 jdbcdriver = org.postgresql.Driver
 jdbcUrl = jdbc:postgresql://localhost:5432/kanpian
@@ -23,7 +23,7 @@ rootdir=/kan
 rootsavedir=javsrc/
 
 #资讯来源站点
-censoredhost=https://avmo.pw/cn/
+censoredhost=https://avio.pw/cn/
 uncensoredhost=https://avso.pw/cn/
 westporn=http://pornleech.com/
 
@@ -38,13 +38,16 @@ root=rootoor
 pass=rootoor
 
 #bt来源站点
-bthost=http://sukebei.nyaa.se/
+bthost1=https://onejav.com/
 bthost2=https://www.torrentkitty.tv/search/
 bthost3=https://btso.pw/search/
+bthost4=https://sukebei.nyaa.si/
 
+notproxydownload=box.n0808
 #bt获取逻辑参数控制
-# 全部站点依次获取:all，nyaa:t1，kitty:t2，BtSow:t3
+# 全部站点依次获取:all,onejav:t1,kitty:t2,BtSow:t3,nyaa:t4
 # 多个站点用 “--” 隔开
+selectallbt=t1--t2--t3--t4
 selectbt=t1--t2
 #管理后台参数end
 

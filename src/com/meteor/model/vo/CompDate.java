@@ -17,6 +17,7 @@ import org.jsoup.nodes.Element;
 public class CompDate implements Comparable{
 	private int index;
 	private Element ele;
+	private String date;
 
 	public String getDate() {
 		return date;
@@ -25,8 +26,6 @@ public class CompDate implements Comparable{
 	public void setDate(String date) {
 		this.date = date;
 	}
-
-	private String date;
 
 	public Element getEle() {
 		return ele;

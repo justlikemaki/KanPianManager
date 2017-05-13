@@ -18,8 +18,9 @@
 		<div class="selectWebsite">
 			<span id="all">全选</span>
 			<span id="t2" class="active">TorrentKitty</span>
-			<span id="t1">Nyaa</span>
+			<span id="t1">onejav</span>
 			<span id="t3">BtSow</span>
+		    <span id="t4">Nyaa</span>
 		</div>
 	</div>
 	<div class="context mdl-shadow--3dp">
