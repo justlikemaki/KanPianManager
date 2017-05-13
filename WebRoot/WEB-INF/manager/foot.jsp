@@ -16,10 +16,11 @@
 			<input class="mdl-mega-footer--heading-checkbox" type="checkbox" checked>
 			<h1 class="mdl-mega-footer--heading">SOURCE</h1>
 			<ul class="mdl-mega-footer--link-list">
-				<li><a target="_blank" href="https://avmo.pw/cn">avmoo</a></li>
+				<li><a target="_blank" href="https://avio.pw/cn/">avmoo</a></li>
 				<li><a target="_blank" href="https://avso.pw/cn">avsox</a></li>
 				<li><a target="_blank" href="http://pornleech.com">pornleech</a></li>
-				<li><a target="_blank" href="http://sukebei.nyaa.se">nyaa</a></li>
+				<li><a target="_blank" href="https://onejav.com/">onejav</a></li>
+				<li><a target="_blank" href="https://sukebei.nyaa.si">nyaa</a></li>
 				<li><a target="_blank" href="https://www.torrentkitty.tv/search">torrentkitty</a></li>
 				<li><a target="_blank" href="https://btso.pw/search">btsow</a></li>
 			</ul>
