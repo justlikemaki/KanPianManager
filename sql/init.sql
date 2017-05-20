@@ -7,60 +7,62 @@ CREATE DATABASE kanpian
        LC_CTYPE = 'Chinese (Simplified)_People''s Republic of China.936'
        CONNECTION LIMIT = -1;
 
--- ----------------------------
--- Table structure for errpage
--- ----------------------------
-DROP TABLE IF EXISTS "public"."errpage";
-CREATE TABLE "public"."errpage" (
-"id" varchar(30) COLLATE "default" NOT NULL,
-"type" varchar(30) COLLATE "default",
-"num" varchar(30) COLLATE "default",
-"errmsg" text COLLATE "default",
-"searchkey" varchar(255) COLLATE "default"
+use kanpian;       
+       
+CREATE TABLE public.errpage (
+	id varchar(30) NOT NULL,
+	"type" varchar(30) NULL,
+	num varchar(30) NULL,
+	errmsg text NULL,
+	searchkey varchar(255) NULL,
+	createtime timestamp NULL DEFAULT now(),
+	CONSTRAINT errpage_pkey PRIMARY KEY (id)
 )
-WITH (OIDS=FALSE)
+WITH (
+	OIDS=FALSE
+) ;
 
-;
-
--- ----------------------------
--- Table structure for javsrc
--- ----------------------------
-DROP TABLE IF EXISTS "public"."javsrc";
-CREATE TABLE "public"."javsrc" (
-"id" varchar(30) COLLATE "default" NOT NULL,
-"title" text COLLATE "default",
-"times" varchar(30) COLLATE "default",
-"imgsrc" text COLLATE "default",
-"tabtype" varchar(30) COLLATE "default",
-"isdown" varchar(1) COLLATE "default",
-"tags" text COLLATE "default",
-"btfile" text COLLATE "default",
-"btname" text COLLATE "default",
-"isstar" varchar(1) COLLATE "default",
-"sbm" text COLLATE "default"
+CREATE TABLE public.javimg (
+	id varchar(30) NOT NULL,
+	srcid varchar(30) NULL,
+	imgbase text NULL,
+	CONSTRAINT javimg_pkey PRIMARY KEY (id)
 )
-WITH (OIDS=FALSE)
+WITH (
+	OIDS=FALSE
+) ;
+CREATE INDEX imgsrcid ON public.javimg (srcid DESC) ;
 
-;
+CREATE TABLE public.javsrc (
+	"_id_" int4 NOT NULL DEFAULT nextval('javsrc__id__seq'::regclass),
+	id varchar(30) NOT NULL,
+	title text NULL,
+	times varchar(30) NULL,
+	imgsrc text NULL,
+	tabtype varchar(30) NULL,
+	isdown varchar(1) NULL,
+	tags text NULL,
+	btfile text NULL,
+	btname text NULL,
+	isstar varchar(1) NULL,
+	sbm text NULL,
+	CONSTRAINT javsrc_pkey PRIMARY KEY ("_id_")
+)
+WITH (
+	OIDS=FALSE
+) ;
+CREATE UNIQUE INDEX javsrc_id_tags_idx ON public.javsrc (id DESC) ;
+CREATE INDEX javsrc_sbm_idx ON public.javsrc (sbm DESC) ;
+CREATE INDEX javsrc_times_idx ON public.javsrc (times DESC) ;
+CREATE INDEX javsrc_title_tags_idx ON public.javsrc (title DESC,tags DESC) ;
 
--- ----------------------------
--- Alter Sequences Owned By 
--- ----------------------------
-
--- ----------------------------
--- Primary Key structure for table errpage
--- ----------------------------
-ALTER TABLE "public"."errpage" ADD PRIMARY KEY ("id");
-
--- ----------------------------
--- Indexes structure for table javsrc
--- ----------------------------
-CREATE INDEX "id" ON "public"."javsrc" USING btree ("id");
-CREATE INDEX "javsrc_title_tags_idx" ON "public"."javsrc" USING btree ("title", "tags");
-CREATE INDEX "sbm" ON "public"."javsrc" USING hash ("sbm");
-CREATE INDEX "times" ON "public"."javsrc" USING hash ("times");
-
--- ----------------------------
--- Primary Key structure for table javsrc
--- ----------------------------
-ALTER TABLE "public"."javsrc" ADD PRIMARY KEY ("id");
+CREATE TABLE public.javtor (
+	id varchar(30) NOT NULL,
+	srcid varchar(30) NULL,
+	torbase text NULL,
+	CONSTRAINT javtor_pkey PRIMARY KEY (id)
+)
+WITH (
+	OIDS=FALSE
+) ;
+CREATE INDEX torsrcid ON public.javtor (srcid DESC) ;
