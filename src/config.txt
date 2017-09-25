@@ -1,4 +1,4 @@
-serverhost=http://localhost:88/kan/manager/
+serverhost=http://localhost:81/kan/manager/
 #默认数据库链接参数
 jdbcdriver = org.postgresql.Driver
 jdbcUrl = jdbc:postgresql://localhost:5432/kanpian
@@ -23,8 +23,8 @@ rootdir=/kan
 rootsavedir=javsrc/
 
 #资讯来源站点
-censoredhost=https://avio.pw/cn/
-uncensoredhost=https://avso.pw/cn/
+censoredhost=https://avmo.club/cn/
+uncensoredhost=https://avso.club/cn/
 westporn=http://pornleech.com/
 
 #代理配置
