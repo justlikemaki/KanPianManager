@@ -1,5 +1,6 @@
 package com.meteor.task;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +88,22 @@ public class HandleErrTask implements Job{
 			tabtype = tabtype+"---"+search;
 		}
 		String mapnum = pageMap.get(tabtype);
-		String thenum = page.getNum()+"errid"+page.getId();
+		String thenum = "";
+		if(page.getNum().contains("--")){
+			String[] numarr = page.getNum().split("--");
+            int bg=Integer.valueOf(numarr[0]);
+            int ed=Integer.valueOf(numarr[1]);
+            List<String> sb=new ArrayList<String>();
+            for(int i=bg;i<=ed;i++){
+            	if(i==ed){
+            		thenum += i+"errid"+page.getId();
+            	}else{
+            		thenum += i+"errid"+page.getId()+"p2p";
+            	}
+            }
+		}else{
+			thenum = page.getNum()+"errid"+page.getId();
+		}
 		if(mapnum==null){
 			pageMap.put(tabtype,thenum);
 		}else{

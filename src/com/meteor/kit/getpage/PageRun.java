@@ -222,6 +222,9 @@ class SubGetPage implements Runnable {
                     }else{
                         nownum = tmpnownum;
                     }
+                    if(type.contains("---")){
+                       type = type.split("---")[0];
+                    }
                     if(type.equals("censored")) {
                           PageKit.getJavmoo( javtitles, sstj, nownum);
                     }
