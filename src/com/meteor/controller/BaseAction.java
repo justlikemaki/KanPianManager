@@ -814,14 +814,14 @@ public class BaseAction extends Controller {
 			String cof= FileUtils.readFileToString(new File(cofpath), "UTF-8");
 			String newcof=null;
 
-			newcof=testHaveNewHostByType("censoredhost",cof);
-			newcof=testHaveNewHostByType("uncensoredhost",newcof);
-			newcof=testHaveNewHostByType("westporn",newcof);
-
-			if(!cof.equals(newcof)) {
-				FileUtils.write(new File(cofpath), newcof, "UTF-8");
-				PageKit.updateProp();
-			}
+//			newcof=testHaveNewHostByType("censoredhost",cof);
+//			newcof=testHaveNewHostByType("uncensoredhost",newcof);
+//			newcof=testHaveNewHostByType("westporn",newcof);
+//
+//			if(!cof.equals(newcof)) {
+//				FileUtils.write(new File(cofpath), newcof, "UTF-8");
+//				PageKit.updateProp();
+//			}
 			renderText("0");
 		} catch (IOException e) {
 			logger.error("替换url任务失败:"+e.toString());

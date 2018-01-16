@@ -23,8 +23,8 @@ rootdir=/kan
 rootsavedir=javsrc/
 
 #资讯来源站点
-censoredhost=https://avmo.club/cn/
-uncensoredhost=https://avso.club/cn/
+censoredhost=https://javhip.com/cn/
+uncensoredhost=https://javpee.com/cn/
 westporn=http://pornleech.com/
 
 #代理配置

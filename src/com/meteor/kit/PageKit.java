@@ -1172,6 +1172,9 @@ public class PageKit {
 	 * @category 得到欧美资源，并转换一部分到无码
 	 */
 	public static int getPornleech(String oldtitles,String searchval,String num) throws Exception {
+			if(true){
+				return 0;
+			}
 			String westporn = PropKit.get("westporn");
 			String typename = "westporn";
 			String url = "";
