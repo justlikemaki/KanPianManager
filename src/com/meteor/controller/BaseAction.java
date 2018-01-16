@@ -88,7 +88,6 @@ public class BaseAction extends Controller {
 		String timesession=getPara("timesession");
 		double threadnum=Double.valueOf(getPara("threadnum"));
 		try{
-			PageKit.testHaveNewHost();
 			PageManager pm=new PageManager();
 			PageRun pr=new PageRun(pm);
 			pr.doit(threadnum,jsonlist,type,fhkey);
@@ -108,7 +107,6 @@ public class BaseAction extends Controller {
 			String jsonlist=getPara("jsonlist");
 			errpage err= new errpage(type,jsonlist,"numlist",fhkey);
 			PgsqlKit.save(ClassKit.errTableName, err);
-			PageKit.testHaveNewHost();
 			String res="ok";
 			renderText(res);
 		} catch (Exception e) {
