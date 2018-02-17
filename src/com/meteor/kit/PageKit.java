@@ -1148,20 +1148,22 @@ public class PageKit {
 		bean.setTags(JsonKit.bean2JSON(tags));
 		/**得到图片地址**/
 		Elements imgs=doc.getElementsByClass("bigImage");
-		String img=imgs.get(0).attr("href");
-		if(!img.startsWith("http")){
-			img="http:"+img;
-		}
-		if (img.contains(imgReplcKey)) {
-			String newimg = getBase64Img(img);
-			if (StringUtils.isNotBlank(newimg)) {
-				img = newimg;
-				bean.setIsstar("1");
-				convertImgTable(bean, img);
-				img = bean.getImgsrc();
+		if(imgs!=null && !imgs.isEmpty()){
+			String img=imgs.get(0).attr("href");
+			if(!img.startsWith("http")){
+				img="http:"+img;
 			}
+			if (img.contains(imgReplcKey)) {
+				String newimg = getBase64Img(img);
+				if (StringUtils.isNotBlank(newimg)) {
+					img = newimg;
+					bean.setIsstar("1");
+					convertImgTable(bean, img);
+					img = bean.getImgsrc();
+				}
+			}
+			bean.setImgsrc(img);
 		}
-		bean.setImgsrc(img);
 		return true;
 	}
 
