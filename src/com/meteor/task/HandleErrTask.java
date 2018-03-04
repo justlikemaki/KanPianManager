@@ -114,5 +114,6 @@ public class HandleErrTask implements Job{
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		reFechPage();
+		PageKit.updateJavNullimage();
 	}
 }

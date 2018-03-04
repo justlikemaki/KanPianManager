@@ -206,6 +206,17 @@ public class PageKit {
 		}
 		return mappingList;
 	}
+	
+	private static Map getHostMap() throws Exception {
+		Map<String, String> mp= new HashMap<String, String>();
+		mp.put("javmoo", PropKit.get("censoredhost"));
+		mp.put("javlog", PropKit.get("uncensoredhost"));
+		mp.put("onejav", PropKit.get("bthost1"));
+		mp.put("nyaa", PropKit.get("bthost4"));
+		mp.put("torrentkitty", PropKit.get("bthost2"));
+		mp.put("btsow", PropKit.get("bthost3"));
+		return mp;
+	}
 
 	public static void getparametersThread(ServletContext sct) {
 		try {
@@ -277,6 +288,10 @@ public class PageKit {
 			if (sct.getAttribute("hotlist") == null) {
 				List<Map.Entry> hotlist = getHotlist();
 				sct.setAttribute("hotlist", hotlist);
+			}
+			if (sct.getAttribute("hostlist") == null) {
+				Map hostmap = getHostMap();
+				sct.setAttribute("hostlist", hostmap);
 			}
 		} catch (Exception e) {
 			logger.error("getparameters: " + e.toString());
@@ -1008,8 +1023,6 @@ public class PageKit {
 			/**得到子链接**/
 			Elements a = one.getElementsByTag("a");
 			String blink=a.get(0).attr("href");
-
-			Thread.sleep(3000);
 			flag = getJavsChild(blink, bean, typename);
 			if (!flag) {
 				continue;
@@ -1151,7 +1164,7 @@ public class PageKit {
 		if(imgs!=null && !imgs.isEmpty()){
 			String img=imgs.get(0).attr("href");
 			if(!img.startsWith("http")){
-				img="http:"+img;
+				img="https:"+img;
 			}
 			if (img.contains(imgReplcKey)) {
 				String newimg = getBase64Img(img);
@@ -1433,6 +1446,92 @@ public class PageKit {
 		one.setImgsrc(img);
 		Map pp = JsonKit.json2Map(JsonKit.bean2JSON(one));
 		PgsqlKit.updateById(ClassKit.javTableName, pp);
+	}
+	
+	public static void updateJavNullimage(){
+		try {
+			SearchQueryP sp = new SearchQueryP();
+			Map p = new LinkedHashMap();
+			p.put("ISNULL_imgsrc", "000");
+			sp.setParameters(p);
+			List<javsrc> js = new ArrayList<javsrc>();
+			Map res = PgsqlKit.findByCondition(ClassKit.javClass, sp);
+			js = (List<javsrc>) res.get("list");
+			for (javsrc onej : js) {
+				String host = "";
+				if ("uncensored".equals(onej.getTabtype())) {
+					host = PropKit.get("uncensoredhost");
+				} else {
+					host = PropKit.get("censoredhost");
+				}
+				String searchval = onej.getSbm();
+				searchval = java.net.URLEncoder.encode(searchval.toLowerCase(), "UTF-8");
+				String url = host + "search/" + searchval + "/page/1";
+				Map head = HttpClientHelp.getDefaultHeader();
+				String ref = host.replace("/cn/", "");
+				head.put("Referer", ref);
+				String html = HttpClientHelp.doGet(url, null, head, true);
+				Document doc = Jsoup.parse(html);
+				Elements news = doc.select(".item");
+				for (int i = 0; i < news.size(); i++) {
+					Element one = news.get(i);
+					/** 得到识别码 **/
+					Elements dates = one.getElementsByTag("date");
+					String sbm = dates.get(0).text().trim();
+					if (!sbm.equals(onej.getSbm())) {
+						continue;
+					}
+					/** 得到子链接 **/
+					Elements a = one.getElementsByTag("a");
+					String blink = a.get(0).attr("href");
+					boolean flag = getJavsChildNullImage(blink, onej, onej.getTabtype());
+					if (!flag) {
+						continue;
+					}
+					Map pp = JsonKit.json2Map(JsonKit.bean2JSON(onej));
+					PgsqlKit.updateById(ClassKit.javTableName, pp);
+					logger.info(onej.getSbm() + "获取图片资源完成");
+				}
+			}
+		} catch (Exception e) {
+			logger.error("重获图片任务中断",e);
+		}
+	}
+	
+	private static boolean getJavsChildNullImage(String blink,javsrc bean,String typename) throws Exception {		
+		if(!blink.startsWith("http")){
+			blink="http:"+blink;
+		}
+		String ref=null;
+		if(typename.equals("uncensored")){
+			 ref=PropKit.get("uncensoredhost");
+		}else{
+			 ref=PropKit.get("censoredhost");
+		}
+		Map head = HttpClientHelp.getDefaultHeader();
+		ref=ref.replace("/cn/","");
+		head.put("Referer", ref);
+		String html=HttpClientHelp.doGet(blink,null,head,true);
+		Document doc = Jsoup.parse(html);
+		/**得到图片地址**/
+		Elements imgs=doc.getElementsByClass("bigImage");
+		if(imgs!=null && !imgs.isEmpty()){
+			String img=imgs.get(0).attr("href");
+			if(!img.startsWith("http")){
+				img="https:"+img;
+			}
+			if (img.contains(imgReplcKey)) {
+				String newimg = getBase64Img(img);
+				if (StringUtils.isNotBlank(newimg)) {
+					img = newimg;
+					bean.setIsstar("1");
+					convertImgTable(bean, img);
+					img = bean.getImgsrc();
+				}
+			}
+			bean.setImgsrc(img);
+		}
+		return true;
 	}
 
 	/**

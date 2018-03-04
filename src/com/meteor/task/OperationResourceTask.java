@@ -21,7 +21,7 @@ public class OperationResourceTask implements Job{
 
 	private void reTobase64(){
 		try {
-			PageKit.tobase64By503();
+			//PageKit.tobase64By503();
 			PageKit.tobase64();
 		} catch (Exception e) {
 			logger.error("图片转换异常: " + e.toString());

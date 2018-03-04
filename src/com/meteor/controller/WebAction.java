@@ -76,6 +76,7 @@ public class WebAction extends Controller {
 	public void clweb(){
 		String res = PageKit.getCaoLiu();
 		getRequest().setAttribute("clres", res);
+		editForm();
 		render("clweb.jsp");
 	}
 
@@ -161,12 +162,14 @@ public class WebAction extends Controller {
 	public void setting(){
 		HttpServletRequest request=getRequest();
 		PageKit.setpc(request);
+		editForm();
 		render(PageKit.topage(request, 0, 0, "setting", "setting", null)+ ".jsp");
 	}
 
 	public void getbtlist(){
 		HttpServletRequest request=getRequest();
 		PageKit.setpc(request);
+		editForm();
 		render(PageKit.topage(request, 0, 0, "getbtlist", "getbtlist",null)+ ".jsp");
 	}
 

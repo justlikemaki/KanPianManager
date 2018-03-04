@@ -20,6 +20,8 @@ input,select{
     right: -30px;
     width: 30px;
     height: 24px;
+    color: rgb(255, 208, 224);
+    background: white;
 }
 .mdl-card__menu {
     top: 36px;
