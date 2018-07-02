@@ -892,6 +892,20 @@ public class BaseAction extends Controller {
 			renderText("转换文件异常");
 		}
 	}
+	
+	public void westpornTo64(){
+		try {
+			PageKit.westpornTo64(getRequest());
+			renderText("转换成功");
+		} catch (Exception e) {
+			logger.error("转换文件异常: " + e.toString());
+			renderText("转换文件异常");
+		} catch (Throwable t) {
+			logger.error("转换文件异常: " + t.toString());
+			westpornTo64();
+			renderText("转换文件异常");
+		}
+	}
 
 	//is work
 	public void testdownload(){

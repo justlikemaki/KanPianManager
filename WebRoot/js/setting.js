@@ -75,6 +75,14 @@ $("#classtobase64").on("click",function(){
     }
 })
 
+$("#westporntobase64").on("click",function(){
+    if(confirm("确定么?")){
+        $.post("manager/westpornTo64",function(data){
+            alert(data);
+        })
+    }
+})
+
 
 $("#updatecache").on("click",function(){
     if(confirm("确定么?")){

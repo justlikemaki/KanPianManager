@@ -53,7 +53,7 @@ public class GetResourceTask  implements Job{
 						 PageKit.getJavlog(javtitles, "", newi);
 					}
 					if(type.equals("westpron")) {
-						 //PageKit.getPornleech(javtitles, "", newi);
+						 PageKit.getPornleech(javtitles, "", newi);
 					}
 				} catch (Exception e) {
 					if(!e.toString().contains("404")) {
@@ -98,7 +98,7 @@ public class GetResourceTask  implements Job{
 		//PageKit.testHaveNewHost();
 		getResourse("censored");
 		getResourse("uncensored");
-		//getResourse("westpron");
+		getResourse("westpron");
 		PageKit.delrepeated();
 	}
 }

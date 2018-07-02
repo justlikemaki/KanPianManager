@@ -59,6 +59,9 @@
 		<button id="classtobase64" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
 			经典资源转BASE64
 		</button>
+		<button id="westporntobase64" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+			欧美片转BASE64
+		</button>
 		<hr>
 		<div class="settingtwo">
 			<ul class="addeditlist">

@@ -211,6 +211,7 @@ public class PageKit {
 		Map<String, String> mp= new HashMap<String, String>();
 		mp.put("javmoo", PropKit.get("censoredhost"));
 		mp.put("javlog", PropKit.get("uncensoredhost"));
+		mp.put("pornleech", PropKit.get("westporn"));
 		mp.put("onejav", PropKit.get("bthost1"));
 		mp.put("nyaa", PropKit.get("bthost4"));
 		mp.put("torrentkitty", PropKit.get("bthost2"));
@@ -1187,9 +1188,6 @@ public class PageKit {
 	 * @category 得到欧美资源，并转换一部分到无码
 	 */
 	public static int getPornleech(String oldtitles,String searchval,String num) throws Exception {
-			if(true){
-				return 0;
-			}
 			String westporn = PropKit.get("westporn");
 			String typename = "westporn";
 			String url = "";
@@ -1836,6 +1834,79 @@ public class PageKit {
 
 //			String rootpath = PageKit.getfilePath(request);
 //			new FileOperateKit().loopDelEmptyFolder(rootpath);
+			logger.info("转换成功");
+			return true;
+		} catch (Exception e) {
+			logger.error("转换资源出错",e);
+			return false;
+		}
+	}
+	
+	
+	public static boolean westpornTo64(HttpServletRequest request){ 
+		try {
+			SearchQueryP p = new SearchQueryP();
+			p.setCount(10000);
+			p.setNowpage(1);
+			Map mp = new HashMap();
+			mp.put("tabtype","westporn");
+			mp.put("isstar","1");
+			mp.put("GTE_times", "2017-01-01");
+			p.setParameters(mp);
+			Map res = PgsqlKit.findByCondition(ClassKit.javClass, p);
+			List<javsrc> srcs = (List<javsrc>) res.get("list");
+			logger.info("待转换数据数量："+res.get("select"));
+			for (Iterator iterator = srcs.iterator(); iterator.hasNext();) {
+				javsrc javsrc = (javsrc) iterator.next();		
+				boolean isTo64tor = false;
+				//存在的记录直接跳过
+				Map ps =new HashMap();
+				ps.put("srcid", javsrc.getId());
+				List l= PgsqlKit.findall(ClassKit.javtorClass, ps);
+				if(l.size()!=0){
+					isTo64tor = true;
+				}
+				//转换种子
+				String torpath = null;
+				if(!isTo64tor){
+					List<String> listtor = JsonKit.json2List(javsrc.getBtfile());
+					if(listtor!=null && javsrc.getBtfile().contains("/pornleech")){
+						List<String> newlisttor = new ArrayList<String>();
+						for (String tor : listtor) {
+							torpath = tor.replace("pornleech.com", "pornleech.is");
+							//torpath = PageKit.formatLocalpath(torpath);
+							// 下载tor
+							String restor = HttpUtilKit.get503Resource(torpath);
+							Map<String, String> ptor = JsonKit.json2Map(restor);
+							if (ptor.get("status").equals("0")) {
+								String torstr = SecurityEncodeKit.GetImageStr(ptor.get("filepath"));
+								if (StringUtils.isNotBlank(torstr)) {
+									javtor javtor = new javtor(javsrc.getId(), torstr);
+									PgsqlKit.save(ClassKit.javtorTableName, javtor);
+									newlisttor.add(PageKit.gettorBase64Key() + javtor.getId());
+									isTo64tor = true;
+								}
+							}
+						}
+						javsrc.setBtfile(JsonKit.bean2JSON(newlisttor));
+					}else if(StringUtils.isBlank(javsrc.getBtfile())){
+						isTo64tor = true;
+					}else if(listtor!=null && listtor.isEmpty()){
+						isTo64tor = true;
+					}else if(javsrc.getBtfile().contains("http://") || javsrc.getBtfile().contains("magnet:?xt=")){
+						isTo64tor = true;
+					}
+				}
+				if(!isTo64tor){
+					logger.warn(javsrc.getId()+"转换失败,等待下一次转换。");
+				}else{
+					javsrc.setIsstar("2");
+					Map pp=JsonKit.json2Map(JsonKit.bean2JSON(javsrc));
+					PgsqlKit.updateById(ClassKit.javTableName, pp);
+				}
+				iterator.remove();
+				logger.info("剩余转换对象："+srcs.size());
+			}
 			logger.info("转换成功");
 			return true;
 		} catch (Exception e) {

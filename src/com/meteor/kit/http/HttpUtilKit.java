@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.ssl.TrustStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,12 @@ public class HttpUtilKit {
 			htmlPage = get503(url);
 			wr = htmlPage.getWebResponse();
 			String filename = getFileName(wr);
+			filename = filename.replace("/", "-");
+			filename = filename.replace("*", "-");
+			filename = filename.replace("!", "-");
+			filename = filename.replace("(", "[");
+			filename = filename.replace(")", "]");
+			filename = filename.replace("?", "-");
 			String tmpsavedir = MainConfig.tmpsavedir;
 			String filpath = tmpsavedir + "/" + filename;
 			File dir = new File(tmpsavedir);
@@ -81,7 +88,7 @@ public class HttpUtilKit {
 
 		} catch (Exception e) {
 			if (!e.toString().contains("404")) {
-				logger.error("下载文件" + e.toString());
+				logger.error("下载文件" + e.toString(),e);
 			}
 			resp.put("status", -1);
 			resp.put("errmsg", e.toString());
@@ -181,9 +188,9 @@ public class HttpUtilKit {
 	}
 
 	private static void checkFileAllDownload(WebResponse response, File f) throws Exception {
-		int length = Integer.valueOf(response.getResponseHeaderValue("Content-Length"));
+		String length = response.getResponseHeaderValue("Content-Length");
 		int filelength = FileUtils.readFileToByteArray(f).length;
-		if (length != filelength) {
+		if (StringUtils.isNotBlank(length) && Integer.valueOf(length).intValue() != filelength) {
 			throw new Exception("资源下载不完整，需重新下载");
 		}
 	}
