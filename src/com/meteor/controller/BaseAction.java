@@ -895,7 +895,7 @@ public class BaseAction extends Controller {
 	
 	public void westpornTo64(){
 		try {
-			PageKit.westpornTo64(getRequest());
+			PageKit.westpornTo64();
 			renderText("转换成功");
 		} catch (Exception e) {
 			logger.error("转换文件异常: " + e.toString());

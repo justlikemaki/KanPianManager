@@ -1843,10 +1843,10 @@ public class PageKit {
 	}
 	
 	
-	public static boolean westpornTo64(HttpServletRequest request){ 
+	public static boolean westpornTo64(){ 
 		try {
 			SearchQueryP p = new SearchQueryP();
-			p.setCount(10000);
+			p.setCount(5000);
 			p.setNowpage(1);
 			Map mp = new HashMap();
 			mp.put("tabtype","westporn");
