@@ -506,8 +506,8 @@ public class HttpClientHelp {
 
 	protected static String getFileName(CloseableHttpResponse response, HttpEntity entity) {
 		String filename = null;
-		String ctype = entity.getContentType().getValue();
-		if (!ctype.contains("text/html")) {
+		if (entity.getContentType()!=null && !entity.getContentType().getValue().contains("text/html")) {
+			String ctype = entity.getContentType().getValue();
 			Header hd = response.getFirstHeader("Content-Disposition");
 			if (hd != null) {
 				filename = hd.getValue(); // hd.toString().split(";")[1];
@@ -590,7 +590,7 @@ public class HttpClientHelp {
 			if (StringUtils.isNotBlank(filename)) {
 				res = FileDownload(response, filedest, filename, isdir);
 			} else {
-				String ctype = entity.getContentType().getValue();
+				String ctype = entity.getContentType() != null ? entity.getContentType().getValue() : "null";
 				resp.put("status", -2);
 				resp.put("errmsg", ctype + "_" + "不是可下载文件类型");
 				res = JsonKit.map2JSON(resp);

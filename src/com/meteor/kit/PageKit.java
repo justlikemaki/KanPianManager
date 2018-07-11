@@ -1411,6 +1411,9 @@ public class PageKit {
 	}
 
 	private static String getBase64Img(String imgurl){
+		if(!imgurl.contains("jpg") && !imgurl.contains("png") && !imgurl.contains("jpeg")){
+			return "000";
+		}
 		String tmpdir= MainConfig.tmpsavedir;//PropKit.get("tmpsavedir");
 		String img = "";
 		Map head = HttpClientHelp.getDefaultHeader();
@@ -1556,7 +1559,7 @@ public class PageKit {
 				String img = one.getImgsrc();
 				getAndUpdate503(one,img);
 			}
-			logger.error("转换图片为Base64成功");
+			logger.error("转换503图片为Base64成功");
 		}
 	}
 
@@ -1584,15 +1587,20 @@ public class PageKit {
 		for (javsrc one:js){
 			String img = one.getImgsrc();
 			String newimg=getBase64Img(img);
-			if(StringUtils.isNotBlank(newimg)){
-				img = newimg;
-				one.setIsstar("1");
-				convertImgTable(one, img);
-				img = one.getImgsrc();
+			if (StringUtils.isNotBlank(newimg)) {
+				if ("000".equals(newimg)) {
+					one.setIsstar("1");
+				} else {
+					img = newimg;
+					one.setIsstar("1");
+					convertImgTable(one, img);
+					img = one.getImgsrc();
+				}
 			}
 			one.setImgsrc(img);
 			Map pp=JsonKit.json2Map(JsonKit.bean2JSON(one));
 			PgsqlKit.updateById(ClassKit.javTableName, pp);
+
 		}
 	}
 

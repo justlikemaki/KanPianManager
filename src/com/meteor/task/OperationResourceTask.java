@@ -21,11 +21,13 @@ public class OperationResourceTask implements Job{
 
 	private void reTobase64(){
 		try {
+			PageKit.westpornTo64();
 			PageKit.tobase64By503();
 			PageKit.tobase64();
-			PageKit.westpornTo64();
 		} catch (Exception e) {
 			logger.error("图片转换异常: " + e.toString());
+		}  catch (Throwable t) {
+			logger.error("图片转换异常: " + t.toString());
 		}
 		//清空临时文件夹
 		String tmpdir= MainConfig.tmpsavedir;//PropKit.get("tmpsavedir");
