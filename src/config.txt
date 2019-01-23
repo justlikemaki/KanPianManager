@@ -40,7 +40,7 @@ pass=rootoor
 #bt来源站点
 bthost1=https://onejav.com/
 bthost2=https://www.torrentkitty.tv/search/
-bthost3=https://btso.pw/search/
+bthost3=https://btsow.pw/search/
 bthost4=https://sukebei.nyaa.si/
 
 notproxydownload=box.n0808

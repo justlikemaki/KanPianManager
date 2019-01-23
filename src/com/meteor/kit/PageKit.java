@@ -603,7 +603,7 @@ public class PageKit {
 			String html = HttpClientHelp.doGet(url, null, headers, true);
 
 			Document doc = Jsoup.parse(html);
-			Elements news = doc.select(".card-group .card-block");
+			Elements news = doc.select(".card-content");
 			// if(news == null || news.isEmpty() || news.size()==0){
 			// SendEmail.sendWebChangeWarn(url);
 			// }
@@ -871,7 +871,7 @@ public class PageKit {
 				if (StringUtils.isNotBlank(id)) {
 					int ed = elelist.size() > 3 ? 3 : elelist.size();
 					for (int i = 0; i < ed; i++) {
-						BtList bl = getBtNyaaList(elelist.get(i).getEle());
+						BtList bl = getBtNyaaList(elelist.get(i).getEle(), bthost);
 						btlist.add(bl);
 					}
 				} else {
@@ -884,7 +884,7 @@ public class PageKit {
 						btlist.add(errlistOne());
 					}
 					for (int i = 0; i < elelist.size(); i++) {
-						BtList bl = getBtNyaaList(elelist.get(i).getEle());
+						BtList bl = getBtNyaaList(elelist.get(i).getEle(), bthost);
 						btlist.add(bl);
 					}
 				}
@@ -904,13 +904,14 @@ public class PageKit {
 	 * @Title
 	 * @category 获取bt列表
 	 */
-	private static BtList getBtNyaaList(Element one) throws Exception {
+	private static BtList getBtNyaaList(Element one, String host) throws Exception {
 		BtList bl = new BtList();
 		Element tlistname = one.child(1);
 		String btname = tlistname.getElementsByTag("a").text();
 		bl.setBtname(btname + ".torrent");
 		Element tlistlink = one.child(2);
 		String btlink = tlistlink.getElementsByTag("a").get(0).attr("href");
+		btlink = host + btlink;
 		bl.setBtlink(btlink);
 		return bl;
 	}
