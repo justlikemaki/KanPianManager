@@ -23,9 +23,9 @@ rootdir=/kan
 rootsavedir=javsrc/
 
 #资讯来源站点
-censoredhost=https://javlog.com/cn/
-uncensoredhost=https://javfee.com/cn/
-westporn=http://pornleech.com/
+censoredhost=https://avmoo.xyz/cn/
+uncensoredhost=https://avsox.net/cn/
+westporn=http://pornleech.is/
 
 #代理配置
 isproxy=1
