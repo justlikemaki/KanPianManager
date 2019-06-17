@@ -1,5 +1,5 @@
 # KanPianManager
-开源的（Makes Your Dick Bigger）资源管理平台，看封面，搜番号，搜种子。
+开源的（Makes Your Dick Bigger）资源管理平台，看封面，搜番号，搜种子。 
 
 ### 使用的技术
 后端基于jFinal框架，和postgresql数据库。前端基于Material Design Lite，和jquery。

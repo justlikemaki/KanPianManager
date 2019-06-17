@@ -1,0 +1,70 @@
+serverhost=http://localhost:81/kan/manager/
+#默认数据库链接参数
+jdbcdriver = org.postgresql.Driver
+jdbcUrl = jdbc:postgresql://localhost:5432/kanpian
+user = postgres
+password = 65604225
+
+#jdbcdriver1 = org.postgresql.Driver
+#jdbcUrl1 = jdbc:postgresql://localhost:5432/kanpianbk
+#user1 = postgres
+#password1 = 65604225
+
+
+#管理后台参数begin
+#基本参数
+dataintoday=1
+#是否只显示今天之内的数据（仅作用于服务端，1：true，0：false）
+streammode=1
+pagesize=20
+#tmpsavedir=D://Development/Servers/Tomcats/Tomcat7-JAV/temp/kan
+tmpsavedir=/temp/kan/
+rootdir=/kan
+rootsavedir=javsrc/
+
+#资讯来源站点
+censoredhost=https://avmoo.xyz/cn/
+uncensoredhost=https://avsox.net/cn/
+westporn=http://pornleech.is/
+
+#代理配置
+isproxy=1
+host=localhost
+port=1088
+isproxy_other=0
+
+#管理后台登录账号密码
+root=rootoor
+pass=rootoor
+
+#bt来源站点
+bthost1=https://onejav.com/
+bthost2=https://www.torrentkitty.tv/search/
+bthost3=https://btsow.pw/search/
+bthost4=https://sukebei.nyaa.si/
+
+notproxydownload=box.n0808
+#bt获取逻辑参数控制
+# 全部站点依次获取:all,onejav:t1,kitty:t2,BtSow:t3,nyaa:t4
+# 多个站点用 “--” 隔开
+selectallbt=t1--t2--t3--t4
+selectbt=t1--t2
+#管理后台参数end
+
+#web前端分页控制
+webpagesize=20
+#移动前端分页控制
+mbpagesize=20
+#移动前端草榴反代站点接口
+clweb=http://get.xunfs.com/app/listapp.php
+#是否只显示今天之内的数据（仅作用于客户端，1：true，0：false）
+showintoday=1
+
+#email配置
+mail.smtp.serverhost=smtp.aliyun.com
+mail.smtp.serverport=25
+mail.username=justlikemaki@aliyun.com
+mail.password=LEppjustmaki
+mail.fromAddress=justlikemaki@aliyun.com
+
+img503Sql=select * from javsrc where tabtype = 'westporn' and isstar is null and imgsrc like '%/torrentimg/%'
