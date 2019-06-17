@@ -1915,7 +1915,7 @@ public class PageKit {
 			Map mp = new HashMap();
 			mp.put("tabtype", "westporn");
 			mp.put("isstar", "1");
-			mp.put("GTE_times", "2017-01-01");
+			//mp.put("GTE_times", "2017-01-01");
 			p.setParameters(mp);
 			Map res = PgsqlKit.findByCondition(ClassKit.javClass, p);
 			List<javsrc> srcs = (List<javsrc>) res.get("list");

@@ -14,11 +14,6 @@ import com.meteor.kit.PageKit;
 public class OperationResourceTask implements Job{
 	private final Logger logger = LoggerFactory.getLogger(OperationResourceTask.class);
 
-	private void delrepeated(){
-		PageKit.delrepeated();
-	}
-
-
 	private void reTobase64(){
 		try {
 			PageKit.westpornTo64();
@@ -43,7 +38,8 @@ public class OperationResourceTask implements Job{
 
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-		delrepeated();
+		PageKit.delrepeated();
+		PageKit.coverWestpornData();
 		reTobase64();
 	}
 }

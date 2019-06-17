@@ -100,6 +100,5 @@ public class GetResourceTask  implements Job{
 		getResourse("uncensored");
 		getResourse("westpron");
 		PageKit.delrepeated();
-		PageKit.coverWestpornData();
 	}
 }
