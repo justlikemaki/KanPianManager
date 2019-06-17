@@ -1,4 +1,4 @@
-# KanPianManager
+# KanPianManager 
 开源的（Makes Your Dick Bigger）资源管理平台，看封面，搜番号，搜种子。 
 
 ### 使用的技术
