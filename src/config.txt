@@ -23,13 +23,18 @@ rootdir=/kan
 rootsavedir=javsrc/
 
 #资讯来源站点
+<<<<<<< Upstream, based on branch 'master' of https://github.com/justlikemaki/KanPianManager.git
 censoredhost=https://avmoo.asia/cn/
 uncensoredhost=https://avsox.asia/cn/
+=======
+censoredhost=https://javzoo.com/cn/
+uncensoredhost=https://avme.pw/cn/
+>>>>>>> 7e85cbc update source
 westporn=http://pornleech.is/
 
 #代理配置
 isproxy=1
-host=127.0.0.1
+host=192.168.2.218
 port=1088
 isproxy_other=0
 
