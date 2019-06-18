@@ -23,13 +23,13 @@ rootdir=/kan
 rootsavedir=javsrc/
 
 #资讯来源站点
-censoredhost=https://javzoo.com/cn/
-uncensoredhost=https://avme.pw/cn/
+censoredhost=https://avmoo.asia/cn/
+uncensoredhost=https://avsox.asia/cn/
 westporn=http://pornleech.is/
 
 #代理配置
 isproxy=1
-host=192.168.2.218
+host=127.0.0.1
 port=1088
 isproxy_other=0
 
