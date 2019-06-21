@@ -1,7 +1,0 @@
-#调试设备
-#ios真机（自用）
-dv1=1b9ebc63e7c2faa8485bbeacdbf60d9b19402eea
-#ios模拟器5s（自用）
-dv2=8720b712ea699ad9ce1a2c7d47e51dd4ce8ce711
-#android调试+真机
-dv3=868802029978343

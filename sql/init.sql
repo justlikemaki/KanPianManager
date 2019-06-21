@@ -1,11 +1,13 @@
 DROP DATABASE kanpian;
 CREATE DATABASE kanpian
-  WITH OWNER = postgres
-       ENCODING = 'UTF8'
-       TABLESPACE = pg_default
-       LC_COLLATE = 'Chinese (Simplified)_People''s Republic of China.936'
-       LC_CTYPE = 'Chinese (Simplified)_People''s Republic of China.936'
-       CONNECTION LIMIT = -1;
+      WITH
+      OWNER = postgres
+      ENCODING = 'UTF8'
+      LC_COLLATE = 'en_US.utf8'
+      LC_CTYPE = 'en_US.utf8'
+      TABLESPACE = pg_default
+      template = template0
+      CONNECTION LIMIT = -1;
 
 use kanpian;       
        
@@ -33,9 +35,22 @@ WITH (
 ) ;
 CREATE INDEX imgsrcid ON public.javimg (srcid DESC) ;
 
+-- DROP SEQUENCE public.javsrc__id__seq;
+
+CREATE SEQUENCE public.javsrc__id__seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 9223372036854775807
+	START 1;
+
+-- Permissions
+
+ALTER SEQUENCE public.javsrc__id__seq OWNER TO postgres;
+GRANT ALL ON SEQUENCE public.javsrc__id__seq TO postgres;
+
 CREATE TABLE public.javsrc (
-	"_id_" int4 NOT NULL DEFAULT nextval('javsrc__id__seq'::regclass),
-	id varchar(30) NOT NULL,
+	id int4 NOT NULL DEFAULT nextval('javsrc__id__seq'::regclass),
+	mgid varchar(30) NOT NULL,
 	title text NULL,
 	times varchar(30) NULL,
 	imgsrc text NULL,

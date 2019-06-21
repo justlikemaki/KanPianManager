@@ -1,9 +1,9 @@
-serverhost=http://localhost:81/kan/manager/
+serverhost=http://localhost:88/kan/manager/
 #默认数据库链接参数
 jdbcdriver = org.postgresql.Driver
 jdbcUrl = jdbc:postgresql://localhost:5432/kanpian
 user = postgres
-password = 65604225
+password = postgres4225#
 
 #jdbcdriver1 = org.postgresql.Driver
 #jdbcUrl1 = jdbc:postgresql://localhost:5432/kanpianbk
@@ -23,13 +23,13 @@ rootdir=/kan
 rootsavedir=javsrc/
 
 #资讯来源站点
-censoredhost=https://avmoo.xyz/cn/
-uncensoredhost=https://avsox.net/cn/
+censoredhost=https://javzoo.com/cn/
+uncensoredhost=https://avme.pw/cn/
 westporn=http://pornleech.is/
 
 #代理配置
 isproxy=1
-host=localhost
+host=192.168.2.218
 port=1088
 isproxy_other=0
 
@@ -39,7 +39,7 @@ pass=rootoor
 
 #bt来源站点
 bthost1=https://onejav.com/
-bthost2=https://www.torrentkitty.tv/search/
+bthost2=https://www.torrentkitty.se/search/
 bthost3=https://btsow.pw/search/
 bthost4=https://sukebei.nyaa.si/
 
