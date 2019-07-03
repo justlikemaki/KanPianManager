@@ -1805,22 +1805,27 @@ public class PageKit {
 	}
 
 	public static String getCaoLiu() {
-		Map head = new HashMap();
-		head.put("Content-Type", "application/x-www-form-urlencoded");
-		Map params = new HashMap();
-		params.put("a", "g");
-		params.put("v", "0");
-		String url = PropKit.get("clweb");
-		String res = null;
-		try {
-//			res = HttpClientHelp.doPost(url, params, head);
-			res = HttpClientHelp.doGet(url, null, head, true);
-		} catch (Exception e) {
-			res = "获取草榴网址异常";
-		}
-		return res;
+//		Map head = new HashMap();
+//		head.put("Content-Type", "application/x-www-form-urlencoded");
+//		Map params = new HashMap();
+//		params.put("a", "g");
+//		params.put("v", "0");
+//		String url = PropKit.get("clweb");
+//		String res = null;
+//		try {
+////			res = HttpClientHelp.doPost(url, params, head);
+//			res = HttpClientHelp.doGet(url, null, head, true);
+//		} catch (Exception e) {
+//			res = "获取草榴网址异常";
+//		}
+//		return res;
+		return PropKit.get("clweb");
 	}
-
+	
+	public static void main(String[] args) {
+		getCaoLiu();
+	}
+	
 	public static boolean classicalTobase64(HttpServletRequest request) {
 		try {
 			String rootsavedir = PropKit.get("rootsavedir");

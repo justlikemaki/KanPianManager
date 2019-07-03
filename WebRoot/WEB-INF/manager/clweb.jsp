@@ -20,7 +20,7 @@
 <div class="wrap">
     <a href=""><h1>JAV</h1></a>
     <div class="banner">
-        ${clres}
+        <a href="${clres}" target="_blank" rel="noreferrer">去看看</a>
     </div>
 </div>
 <script type="text/javascript" src="error/init.js"></script>
