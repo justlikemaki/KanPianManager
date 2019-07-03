@@ -23,18 +23,13 @@ rootdir=/kan
 rootsavedir=javsrc/
 
 #资讯来源站点
-<<<<<<< Upstream, based on branch 'master' of https://github.com/justlikemaki/KanPianManager.git
 censoredhost=https://avmoo.asia/cn/
 uncensoredhost=https://avsox.asia/cn/
-=======
-censoredhost=https://javzoo.com/cn/
-uncensoredhost=https://avme.pw/cn/
->>>>>>> 7e85cbc update source
 westporn=http://pornleech.is/
 
 #代理配置
 isproxy=1
-host=192.168.2.218
+host=127.0.0.1
 port=1088
 isproxy_other=0
 
@@ -61,7 +56,7 @@ webpagesize=20
 #移动前端分页控制
 mbpagesize=20
 #移动前端草榴反代站点接口
-clweb=http://get.xunfs.com/app/listapp.php
+clweb=https://www.t66y.com/mobile.php?ismobile=yes
 #是否只显示今天之内的数据（仅作用于客户端，1：true，0：false）
 showintoday=1
 

@@ -1272,7 +1272,8 @@ public class PageKit {
 		}
 		// 拉取页面得到doc对象
 		// String html = MultitHttpClient.post(url);
-		String html = HttpUtilKit.get503Page(url);
+//		String html = HttpUtilKit.get503Page(url);
+		String html  = HttpClientHelp.doGet(url, null, null, false);
 		Document doc = Jsoup.parse(html);
 		Elements tabs = doc.select("table[class=lista][width=100%]");
 		if (tabs == null || tabs.isEmpty() || tabs.size() == 0) {
@@ -1324,7 +1325,8 @@ public class PageKit {
 	private static boolean getPornleechChild(String blink, javsrc bean, String typename, String host, String title,
 			String mvType) throws Exception {
 		// String html=MultitHttpClient.post(blink);
-		String html = HttpUtilKit.get503Page(blink);
+//		String html = HttpUtilKit.get503Page(blink);
+		String html  = HttpClientHelp.doGet(blink, null, null, false);
 		Document doc = Jsoup.parse(html);
 		Elements tabs = doc.select("table[class=lista]");
 		if (tabs.isEmpty()) {
@@ -1811,7 +1813,8 @@ public class PageKit {
 		String url = PropKit.get("clweb");
 		String res = null;
 		try {
-			res = HttpClientHelp.doPost(url, params, head);
+//			res = HttpClientHelp.doPost(url, params, head);
+			res = HttpClientHelp.doGet(url, null, head, true);
 		} catch (Exception e) {
 			res = "获取草榴网址异常";
 		}
