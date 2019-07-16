@@ -49,8 +49,8 @@ ALTER SEQUENCE public.javsrc__id__seq OWNER TO postgres;
 GRANT ALL ON SEQUENCE public.javsrc__id__seq TO postgres;
 
 CREATE TABLE public.javsrc (
-	id int4 NOT NULL DEFAULT nextval('javsrc__id__seq'::regclass),
-	mgid varchar(30) NOT NULL,
+	_id_ int4 NOT NULL DEFAULT nextval('javsrc__id__seq'::regclass),
+	id varchar(30) NOT NULL,
 	title text NULL,
 	times varchar(30) NULL,
 	imgsrc text NULL,
