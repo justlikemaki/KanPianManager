@@ -667,6 +667,79 @@ public class PageKit {
 		bl.setBtlink(btlink);
 		return bl;
 	}
+	
+	public static List getClp7(String sv, String id, boolean likeflag) {
+		List<BtList> btlist = new ArrayList();
+		try {
+			String bthost = PropKit.get("bthost5");
+			String url = bthost + java.net.URLEncoder.encode(sv, "UTF-8");
+			Map headers = HttpClientHelp.getDefaultHeader();
+			String html = HttpClientHelp.doGet(url, null, headers, true);
+
+			Document doc = Jsoup.parse(html);
+			Elements news = doc.select(".item-title");
+			// if(news == null || news.isEmpty() || news.size()==0){
+			// SendEmail.sendWebChangeWarn(url);
+			// }
+			if (news.size() > 0) {
+				List<CompDate> elelist = new ArrayList();
+				for (int i = 1; i < news.size(); i++) {
+					Element one = (Element) news.get(i);
+					String date = "1";
+					String btname = one.text();
+					btname = btname.toLowerCase();
+					sv = sv.toLowerCase();
+					if (likeflag || (btname.contains(sv) || btname.replace("-", "").contains(sv.replace("-", "")))) {
+						CompDate cd = new CompDate();
+						cd.setIndex(i);
+						cd.setDate(date);
+						cd.setEle(one);
+						elelist.add(cd);
+					}
+				}
+				Collections.sort(elelist);
+
+				if (StringUtils.isNotBlank(id)) {
+					int ed = elelist.size() > 3 ? 3 : elelist.size();
+					for (int i = 0; i < ed; i++) {
+						BtList bl = getClp7List(elelist.get(i).getEle());
+						btlist.add(bl);
+					}
+				} else {
+					if (elelist.size() >= 1) {
+						BtList bl0 = new BtList();
+						bl0.setBtlink("#");
+						bl0.setBtname("Clp7");
+						btlist.add(bl0);
+					} else {
+						btlist.add(errlistOne());
+					}
+					for (int i = 0; i < elelist.size(); i++) {
+						BtList bl = getClp7List(elelist.get(i).getEle());
+						btlist.add(bl);
+					}
+				}
+			} else {
+				btlist.add(errlistOne());
+			}
+		} catch (Exception e) {
+			logger.error("getClp7: " + e.toString());
+			btlist = new ArrayList();
+			btlist.add(errlistOne(e.toString()));
+		}
+		return btlist;
+	}
+	
+	private static BtList getClp7List(Element one) throws Exception {
+		Thread.sleep(1500);
+		
+		String btname = one.text();
+		String btlink = one.child(0).attr("href");
+		BtList bl = new BtList();
+		bl.setBtlink(btlink);
+		bl.setBtname("magnet:?xt=" + btname);
+		return bl;
+	}
 
 	/**
 	 * @author Meteor
@@ -736,6 +809,8 @@ public class PageKit {
 	}
 
 	private static BtList getBtSowList(Element one) throws Exception {
+		Thread.sleep(1500);
+		
 		String btname = one.child(0).attr("title");
 		String baseurl = one.child(0).attr("href");
 		Map headers = HttpClientHelp.getDefaultHeader();

@@ -1,14 +1,14 @@
 serverhost=http://localhost:88/kan/manager/
 #默认数据库链接参数
-jdbcdriver = org.postgresql.Driver
-jdbcUrl = jdbc:postgresql://localhost:5432/kanpian
-user = postgres
-password = postgres4225#
+#jdbcdriver = org.postgresql.Driver
+#jdbcUrl = jdbc:postgresql://localhost:5432/kanpian
+#user = postgres
+#password = postgres4225#
 
-#jdbcdriver1 = org.postgresql.Driver
-#jdbcUrl1 = jdbc:postgresql://localhost:5432/kanpianbk
-#user1 = postgres
-#password1 = 65604225
+jdbcdriver = org.postgresql.Driver
+jdbcUrl = jdbc:postgresql://192.168.1.95:5432/kanpian
+user = postgres
+password = postgres
 
 
 #管理后台参数begin
@@ -28,7 +28,7 @@ uncensoredhost=https://avsox.asia/cn/
 westporn=http://pornleech.is/
 
 #代理配置
-isproxy=1
+isproxy=0
 host=127.0.0.1
 port=1088
 isproxy_other=0
@@ -40,8 +40,9 @@ pass=rootoor
 #bt来源站点
 bthost1=https://onejav.com/
 bthost2=https://www.torrentkitty.se/search/
-bthost3=https://btsow.pw/search/
+bthost3=https://btsow.cam/search/
 bthost4=https://sukebei.nyaa.si/
+bthost5=https://www.clp7.xyz/Search/
 
 notproxydownload=box.n0808
 #bt获取逻辑参数控制

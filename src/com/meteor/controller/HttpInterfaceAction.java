@@ -3,15 +3,20 @@
  */
 package com.meteor.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +26,7 @@ import com.jfinal.kit.Prop;
 import com.jfinal.kit.PropKit;
 import com.meteor.kit.ClassKit;
 import com.meteor.kit.DateKit;
+import com.meteor.kit.FileOperateKit;
 import com.meteor.kit.JsonKit;
 import com.meteor.kit.PageKit;
 import com.meteor.kit.PgsqlKit;
@@ -28,6 +34,7 @@ import com.meteor.kit.SecurityEncodeKit;
 import com.meteor.model.po.javimg;
 import com.meteor.model.po.javsrc;
 import com.meteor.model.po.javtor;
+import com.meteor.model.vo.BtList;
 import com.meteor.model.vo.SearchQueryP;
 
 /**
@@ -38,6 +45,178 @@ import com.meteor.model.vo.SearchQueryP;
 
 public class HttpInterfaceAction extends Controller {
 	private final Logger logger = LoggerFactory.getLogger(HttpInterfaceAction.class);
+	
+	public void test2() throws Exception{
+		String search = getPara("search");
+		loopFolder(search);
+	}
+	
+	private void loopFolder(String folderPath){
+		try {
+			File file = new File(folderPath);
+			if (!file.exists()) {
+				return;
+			}
+			File[] tempList = file.listFiles();
+			double length = tempList.length;
+			for (int i = 0; i < tempList.length; i++) {
+				File f=tempList[i];
+				if(f.isDirectory()){
+					System.out.println("进度条---"+(i+1)/length*100);
+					System.out.println(f.getAbsolutePath());
+					System.out.println(f.getName());
+					
+					loopFolder(f.getAbsolutePath());
+					
+					String path = f.getAbsolutePath()+"/";
+					String search = f.getName();
+					//List<BtList> btlist = PageKit.getBtNyaa(search,null,Boolean.FALSE);
+					List<BtList> btlist = PageKit.getClp7(search,"000",Boolean.FALSE);
+					if(btlist.isEmpty()) {
+						continue;
+					}
+					if(btlist.size()>4) {
+						btlist = btlist.subList(0,3);
+					}
+					if(btlist.get(0).getBtname().contains("403") && !btlist.get(0).getBtname().contains("magnet:?xt=")) {
+						System.out.println("拒绝连接403："+btlist.get(0).getBtlink());
+						return;
+					}
+					
+					StringBuilder sb = new StringBuilder();
+					for (BtList bt : btlist) {
+						if(bt.getBtlink().equals("#")) {
+							continue;
+						}
+						if(bt.getBtlink().equals("###")) {
+							continue;
+						}
+						if (bt.getBtlink().contains("magnet:?xt=")) {
+							String mg = bt.getBtlink().substring(bt.getBtlink().indexOf("magnet:?xt="));
+							sb.append(mg).append("\r\n");
+						} else {
+							String filename = bt.getBtlink().substring(bt.getBtlink().lastIndexOf("/") + 1, bt.getBtlink().length());
+							String filedest = path + filename;
+							PageKit.downloadWithStatus(bt.getBtlink(), filedest, "3");
+						}
+					}
+					if(sb.length()>0) {
+						FileUtils.writeStringToFile(new File(path+search+".magnet.c.txt"),sb.toString());
+					}
+					
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void test() throws Exception{
+		String dir = getPara("dir");
+		SearchQueryP sp = new SearchQueryP();
+		Map p = new LinkedHashMap();
+//		p.put("tabtype", dir);
+		p.put("tags", dir);
+		p.put("NOT_tabtype", "classical");
+		sp.setParameters(p);
+		List<javsrc> js = new ArrayList<javsrc>();
+		Map res = PgsqlKit.findByCondition(ClassKit.javClass, sp);
+		js = (List<javsrc>) res.get("list");
+		for (javsrc javsrc : js) {
+			downloadSrc(javsrc, dir);
+		}
+		System.out.println();
+	}
+	
+	private String downloadSrc(javsrc js,String dir) {
+		String rootsavedir = "javsrc/";
+		String sbm = js.getSbm()==null?js.getId():js.getSbm();
+		String basedir = dir +"/"+ sbm;
+		String fileorigpath = "/home/maki/桌面";
+		String filepath = fileorigpath;
+		filepath = filepath + "/onekeytmp/" + basedir + "/";
+		File f0 = new File(filepath);
+		if (!f0.exists()) {
+			f0.mkdir();
+		}
+		try {
+			String img = js.getImgsrc();
+			if (img.startsWith(PageKit.getimgBase64Key())) {
+				String imgid = img.split(PageKit.getimgBase64Key())[1];
+				javimg jm = (javimg) PgsqlKit.findById(ClassKit.javimgClass, imgid);
+				String baseimg = jm.getImgbase();
+				String filename =  sbm + ".jpg";
+				String filedest = filepath + filename;
+				SecurityEncodeKit.GenerateImage(baseimg, filedest);
+			} else if (img.contains("data:image/")) {
+				img = img.replace(PageKit.getimgBase64Tip(), "");
+				String filename = sbm + ".jpg";
+				String filedest = filepath + filename;
+				SecurityEncodeKit.GenerateImage(img, filedest);
+			} else if (img.contains(rootsavedir)) {
+				String imgpaht = img.replace(rootsavedir, "");
+				String fileorig = fileorigpath + imgpaht;
+				String filename = img.substring(img.lastIndexOf("/") + 1, img.length());
+				String filedest = filepath + filename;
+				FileUtils.copyFile(new File(fileorig), new File(filedest));
+			} else {
+				String url = PageKit.replace20(img);
+				String filename = img.substring(img.lastIndexOf("/") + 1, img.length());
+				String filedest = filepath + filename;
+				String returncode = PageKit.downloadWithStatus(url, filedest, "3");
+//				if (!returncode.equals("0")) {
+//					return returncode;
+//				}
+			}
+		} catch (Exception e) {
+			logger.error("createPackage: " + e.toString());
+			// renderText("3");//下载图片出错。
+			return "3";
+		}
+
+		boolean isDownloadOne = false;
+		String reCode = "0";
+		try {
+			if(StringUtils.isBlank(js.getBtfile()) || js.getBtfilelist().isEmpty()) {
+				return "0";
+			}
+			List<String> bts = js.getBtfilelist();
+			List<String> btns = js.getBtnamelist();
+			for (int i = 0; i < bts.size(); i++) {
+				if (bts.get(i).contains(PageKit.gettorBase64Key())) {
+					String torid = bts.get(i).split(PageKit.gettorBase64Key())[1];
+					javtor jtr = (javtor) PgsqlKit.findById(ClassKit.javtorClass, torid);
+					String tor = jtr.getTorbase();
+					String filename = btns.get(i) + ".torrent";
+					String filedest = filepath + filename;
+					SecurityEncodeKit.GenerateImage(tor, filedest);
+				} else if (bts.get(i).contains(rootsavedir)) {
+					String bt = bts.get(i).replace(rootsavedir, "");
+					String fileorig = fileorigpath + bt;
+					//String filename = bts.get(i).substring(bts.get(i).lastIndexOf("/") + 1, bts.get(i).length());
+					String filename = btns.get(i) + ".torrent";
+					String filedest = filepath + filename;
+					FileUtils.copyFile(new File(fileorig), new File(filedest));
+					isDownloadOne = true;
+				} else {
+					if (bts.get(i).contains("magnet:?xt=")) {
+						String filename = btns.get(i) + ".magnet.txt";
+						String filedest = filepath + filename;
+						FileUtils.writeStringToFile(new File(filedest),bts.get(i));
+					} 
+				}
+			}
+		} catch (Exception e) {
+			logger.error("createPackage: " + e.toString());
+			// renderText("2");//下载种子出错。
+			// return "2";
+			reCode = "2";
+		}
+		if (!reCode.equals("0") && isDownloadOne == true) {
+			reCode = reCode + "_isdown";
+		}
+		return reCode;
+	}
 
 	public void getRight(){
 		ServletContext sct=getRequest().getServletContext();
